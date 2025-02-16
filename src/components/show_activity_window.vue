@@ -1,7 +1,7 @@
 <script setup>
 import win from '@/assets/win.png';
 import {
-  NTooltip
+    NTooltip
 } from "naive-ui";
 import { onBeforeMount, ref } from 'vue';
 import { toast } from "vue3-toastify";

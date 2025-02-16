@@ -1,15 +1,21 @@
 <script setup>
 import {
+    darkTheme,
+    lightTheme,
     NAlert, NAvatar, NButton, NCard,
+    NConfigProvider,
+    NGlobalStyle,
     NInput,
     NSkeleton,
+    NSwitch,
     NTable, NTag,
     NTooltip
 } from "naive-ui";
-import { onBeforeMount, reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref, watch } from 'vue';
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { McInfo, Mclatency } from "./api";
+const darktheme = ref(true)
 const mcserveraddr = ref("")
 const errormsg = reactive({
     "mcserveraddr": "",
@@ -57,34 +63,41 @@ function getMcInfo() {
 onBeforeMount(() => {
     const savedAddr = localStorage.getItem('mcserveraddr');
     mcserveraddr.value = savedAddr;
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
-    var mcadder = params.get('mc')
-    if (mcadder !== "") {
-        mcserveraddr.value = mcadder
-        const mc = ref(null);
+    // const url = new URL(window.location.href);
+    // const params = url.searchParams;
+    // var mcadder = params.get('mc')
+    // if (mcadder !== "") {
+    //     mcserveraddr.value = mcadder
+    //     const mc = ref(null);
 
 
-        getMcInfo()
-        const scrollToDiv = () => {
-            if (mc.value) { 
-                mc.value.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'top'
-                });
-            }
-        };
-        scrollToDiv()
-    }
+    //     getMcInfo()
+    //     const scrollToDiv = () => {
+    //         if (mc.value) { 
+    //             mc.value.scrollIntoView({
+    //                 behavior: 'smooth',
+    //                 block: 'top'
+    //             });
+    //         }
+    //     };
+    //     scrollToDiv()
+    // }
 
 })
+watch(darktheme, (newValue) => {
+  localStorage.setItem('darktheme', JSON.stringify(newValue));
+});
 </script>
 
 <template>
-    <n-card ref="mc" title="Mincraft Server Status" style="min-width: 700px;overflow: auto;">
+  <n-config-provider :theme="darktheme ? darkTheme : lightTheme">
+    <n-card ref="mc" title="Mincraft Server Status" style="min-width: 700px; width: 100%;overflow: auto;">
+        <span style="margin-left: 5px;">暗色模式 <n-switch v-model:value="darktheme" /></span>
+        <br>
         <n-input placeholder="host:port" v-model:value="mcserveraddr" clearable autosize
             style="min-width: 100px; margin: 5px;" />
         <n-button type="primary" style=" margin: 5px;" @click="getMcInfo">查询</n-button>
+        <br>
         <n-alert :show-icon="false" type="error" closable v-if="errormsg.mcserveraddr">
             {{ errormsg.mcserveraddr }}
         </n-alert>
@@ -130,4 +143,6 @@ onBeforeMount(() => {
         </span>
         <n-skeleton v-else text :repeat="2" />
     </n-card>
+    <n-global-style />
+</n-config-provider>
 </template>

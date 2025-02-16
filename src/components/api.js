@@ -1,6 +1,6 @@
 import axios from "axios";
 const isDevelopment = process.env.NODE_ENV === 'development';
-const baseURL = isDevelopment ? 'http://127.0.0.1:5173/api' : location.origin;
+const baseURL = isDevelopment ? 'http://localhost:5173/api' : location.origin;
 const axiosInstance = axios.create({
     baseURL
 });
@@ -53,6 +53,20 @@ export async function get_activity_window() {
 }
 export async function get_steam_info() {
     const response = await axiosInstance.get(`/get_steam_info`);
+    if (!response.status == 200) {
+        throw new Error(response.statusText);
+    }
+    return response.data;
+}
+export async function get_steam_friend_list() {
+    const response = await axiosInstance.get(`get_steam_friend_list`);
+    if (!response.status == 200) {
+        throw new Error(response.statusText);
+    }
+    return response.data;
+}
+export async function get_steam_friend_info() {
+    const response = await axiosInstance.get(`get_steam_friend_info`);
     if (!response.status == 200) {
         throw new Error(response.statusText);
     }

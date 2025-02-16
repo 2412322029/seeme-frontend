@@ -29,12 +29,12 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:80", 
+        target: "http://127.0.0.1:5000", 
         changeOrigin: true, 
         rewrite: (path) => path.replace(/^\/api/, ""), 
       },
       "/exe_icon": {
-        target: "http://localhost:80", 
+        target: "http://127.0.0.1:5000", 
         changeOrigin: true, 
       },
     },
