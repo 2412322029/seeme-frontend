@@ -3,13 +3,9 @@ import img2 from '@/assets/05ce4c873b5c44a0b5abe257b5d5fc20_1440w.png';
 import img1 from '@/assets/6c0c390f4bfbfbed757bfe453ef0f736afc31f0a.gif';
 import desktopicon from '@/assets/desktop.png';
 import {
-  darkTheme,
-  lightTheme,
   NButton,
   NCard,
-  NConfigProvider,
   NFloatButton,
-  NGlobalStyle,
   NImage,
   NLayout, NLayoutContent,
   NLayoutHeader,
@@ -20,35 +16,26 @@ import {
   NTooltip
 } from "naive-ui";
 import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
-import {RouterLink} from 'vue-router'
+import { RouterLink } from 'vue-router';
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { getinfo, getlimit, timeAgo } from "./api";
 import { getphoneIcon } from "./imgmap";
 import Show_activity_window from "./show_activity_window.vue";
 const showtimeline = ref(false);
-const darktheme = ref(true)
 onMounted(() => {
   const storedValue = localStorage.getItem('showtimeline');
-  const darkthemeValue = localStorage.getItem('darktheme');
   if (storedValue !== null) {
     showtimeline.value = JSON.parse(storedValue);
   } else {
     showtimeline.value = window.innerWidth > 900 ? false : true;
-  }
-  if (darkthemeValue !== null) {
-    darktheme.value = JSON.parse(darkthemeValue)
-  } else {
-    darktheme.value = true
   }
 });
 
 watch(showtimeline, (newValue) => {
   localStorage.setItem('showtimeline', JSON.stringify(newValue));
 });
-watch(darktheme, (newValue) => {
-  localStorage.setItem('darktheme', JSON.stringify(newValue));
-});
+
 const errormsg = reactive({
   "info": ""
 })
@@ -129,15 +116,11 @@ function handleImageError(event) {
 </script>
 
 <template>
-  <n-config-provider :theme="darktheme ? darkTheme : lightTheme">
     <n-layout>
       <n-layout-header>
         <n-card title="你在干什么?" style="margin-bottom: 10px;">
           <n-space>
             <span>时间线表示 <n-switch v-model:value="showtimeline" /></span>
-            <span>暗色模式 <n-switch v-model:value="darktheme" /></span>
-            <span><router-link to="/steam" tag="button">steam</router-link></span>
-            <span><router-link to="/mcstatus" tag="button">mcstatus</router-link></span>
           </n-space>
           <n-button @click="getall" text style="margin:10px 0;float:right;font-size: 20px;" title="刷新">↻</n-button>
         </n-card>
@@ -150,7 +133,7 @@ function handleImageError(event) {
                 <n-tooltip trigger="hover" placement="right">
                   <template #trigger>
                     <a target="_blank" style="background-color:transparent;"
-                      href="https://github.com/2412322029/seeme/blob/master/report/report.py">
+                      href="https://github.com/2412322029/seeme/releases">
                       <n-float-button position="relative">?</n-float-button>
                     </a>
                   </template>
@@ -306,8 +289,6 @@ function handleImageError(event) {
         </n-space>
       </n-layout-content>
     </n-layout>
-    <n-global-style />
-  </n-config-provider>
 </template>
 
 <style scoped>

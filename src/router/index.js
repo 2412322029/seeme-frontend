@@ -1,3 +1,4 @@
+import NotFound from '@/views/NotFound.vue'
 import Home from '@/views/home.vue'
 import Mc from '@/views/mc.vue'
 import Steam from '@/views/steam.vue'
@@ -12,7 +13,7 @@ const router = createRouter({
       component: Home,
     },
     {
-      path: '/mcstatus',
+      path: '/mcstatus/:address?',
       name: 'mcstatus',
       component: Mc,
     },
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/steam',
       name: 'steam',
       component: Steam,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound,
     },
   ],
 })

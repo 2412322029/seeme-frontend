@@ -17,6 +17,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "naive-ui": "^2.41.0",
+    "rollup-plugin-terser": "^7.0.2",
     "vite": "^6.1.0",
     "vite-plugin-vue-devtools": "^7.6.8"
   }

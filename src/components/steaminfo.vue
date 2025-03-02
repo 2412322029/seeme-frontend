@@ -3,7 +3,8 @@ import {
     NButton,
     NCard,
     NCollapse,
-    NCollapseItem, NGlobalStyle, NSkeleton
+    NCollapseItem,
+    NSkeleton
 } from "naive-ui";
 import { onBeforeMount, ref } from 'vue';
 import { toast } from "vue3-toastify";
@@ -71,7 +72,7 @@ function setpersonastate(n) {
             color = 'orange';
             break;
         case 4:
-            statusText = '隐身';
+            statusText = '休息';
             color = 'blue';
             break;
         case 5:
@@ -122,7 +123,7 @@ function getPersonaStateflagsHTML(n) {
 </script>
 
 <template>
-    <n-card v-if="steamData['steam_enable']" title="Steam Status" style="min-width: 500px;">
+    <n-card v-if="steamData['steam_enable']" title="Steam Status" style="min-width: 200px;">
         <n-button @click="getsteaminfo" text style="margin:10px 0;float:right;font-size: 20px;" title="刷新">↻</n-button>
         <div v-if="steamData['status_code'] == 200" v-for="(item, index) in steamData.data.response.players"
             style="margin: 5px;" :key="index">
@@ -173,5 +174,4 @@ function getPersonaStateflagsHTML(n) {
         </n-collapse>
     </n-card>
     <n-skeleton v-else text :repeat="5" />
-    <n-global-style />
 </template>
