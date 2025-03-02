@@ -2,7 +2,7 @@
 import iheader from '@/components/iheader.vue';
 import mcstatus from '@/components/mcstatus.vue';
 import myfooter from '@/components/myfooter.vue';
-import { defineProps, defineEmits } from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps({
   darktheme: Boolean

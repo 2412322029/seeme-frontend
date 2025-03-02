@@ -3,7 +3,7 @@ import iheader from '@/components/iheader.vue';
 import myfooter from '@/components/myfooter.vue';
 import pcstatus from '@/components/pcstatus.vue';
 import { darkTheme, lightTheme, NConfigProvider } from 'naive-ui';
-import { defineEmits, defineProps } from 'vue';
+import { defineProps } from 'vue';
 const props = defineProps({
   darktheme: Boolean
 });

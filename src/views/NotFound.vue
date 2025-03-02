@@ -11,8 +11,5 @@ import { NGlobalStyle } from 'naive-ui';
 import { RouterLink } from 'vue-router';
 </script>
 <style scoped>
-.not-found {
-    text-align: center;
-    margin-top: 50px;
-}
+
 </style>

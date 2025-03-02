@@ -1,41 +1,46 @@
 <script setup>
-import img2 from '@/assets/05ce4c873b5c44a0b5abe257b5d5fc20_1440w.png';
-import img1 from '@/assets/6c0c390f4bfbfbed757bfe453ef0f736afc31f0a.gif';
 import desktopicon from '@/assets/desktop.png';
 import {
   NButton,
   NCard,
+  NCheckbox,
   NFloatButton,
-  NImage,
   NLayout, NLayoutContent,
   NLayoutHeader,
   NSpace,
-  NSwitch,
   NTable,
   NTimeline, NTimelineItem,
   NTooltip
 } from "naive-ui";
 import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
-import { RouterLink } from 'vue-router';
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { getinfo, getlimit, timeAgo } from "./api";
 import { getphoneIcon } from "./imgmap";
 import Show_activity_window from "./show_activity_window.vue";
 const showtimeline = ref(false);
+const showwhat = reactive([true, true, true]);
 onMounted(() => {
-  const storedValue = localStorage.getItem('showtimeline');
-  if (storedValue !== null) {
-    showtimeline.value = JSON.parse(storedValue);
+  const storedShowTimeline = localStorage.getItem('showtimeline');
+  showtimeline.value = storedShowTimeline ? JSON.parse(storedShowTimeline) : window.innerWidth <= 900;
+
+  const storedShowWhat = localStorage.getItem('showwhat');
+  if (storedShowWhat) {
+    const parsedShowWhat = JSON.parse(storedShowWhat);
+    showwhat[0] = parsedShowWhat[0];
+    showwhat[1] = parsedShowWhat[1];
+    showwhat[2] = parsedShowWhat[2];
   } else {
-    showtimeline.value = window.innerWidth > 900 ? false : true;
+    showwhat.fill(true);
   }
 });
 
 watch(showtimeline, (newValue) => {
   localStorage.setItem('showtimeline', JSON.stringify(newValue));
 });
-
+watch(showwhat, (newValue) => {
+  localStorage.setItem('showwhat', JSON.stringify(newValue));
+});
 const errormsg = reactive({
   "info": ""
 })
@@ -120,7 +125,10 @@ function handleImageError(event) {
       <n-layout-header>
         <n-card title="你在干什么?" style="margin-bottom: 10px;">
           <n-space>
-            <span>时间线表示 <n-switch v-model:value="showtimeline" /></span>
+            <span>时间线表示 <n-checkbox v-model:checked="showtimeline" /></span>
+            <span>显示电脑 <n-checkbox v-model:checked="showwhat[0]" /></span>
+            <span>显示浏览器 <n-checkbox v-model:checked="showwhat[1]" /></span>
+            <span>显示手机 <n-checkbox v-model:checked="showwhat[2]" /></span>
           </n-space>
           <n-button @click="getall" text style="margin:10px 0;float:right;font-size: 20px;" title="刷新">↻</n-button>
         </n-card>
@@ -128,7 +136,7 @@ function handleImageError(event) {
       <n-layout-content>
         <n-space vertical>
           <n-space vertical v-if="infodata">
-            <n-card :title="'电脑(最新' + limitdata.pc + '项)'">
+            <n-card v-if="showwhat[0]" :title="'电脑(最新' + limitdata.pc + '项)'">
               <template #header-extra>
                 <n-tooltip trigger="hover" placement="right">
                   <template #trigger>
@@ -183,7 +191,7 @@ function handleImageError(event) {
                 </n-timeline>
               </div>
             </n-card>
-            <n-card :title="'电脑浏览器(最新' + limitdata.browser + '项)'">
+            <n-card v-if="showwhat[1]"  :title="'电脑浏览器(最新' + limitdata.browser + '项)'">
               <template #header-extra>
                 <n-tooltip trigger="hover" placement="right">
                   <template #trigger>
@@ -232,7 +240,7 @@ function handleImageError(event) {
                 </n-timeline>
               </div>
             </n-card>
-            <n-card :title="'手机(最新' + limitdata.phone + '项)'">
+            <n-card v-if="showwhat[2]"  :title="'手机(最新' + limitdata.phone + '项)'">
               <template #header-extra>
                 <n-tooltip trigger="hover" placement="right">
                   <template #trigger>
@@ -280,12 +288,6 @@ function handleImageError(event) {
               </div>
             </n-card>
           </n-space>
-          <n-card>
-            <div style="display: flex;align-items: center; width: 100%;justify-content: space-between">
-              <n-image width="100" :src="img1" />
-              <n-image width="100" :src="img2" />
-            </div>
-          </n-card>
         </n-space>
       </n-layout-content>
     </n-layout>

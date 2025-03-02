@@ -1,8 +1,9 @@
-import NotFound from '@/views/NotFound.vue'
-import Home from '@/views/home.vue'
-import Mc from '@/views/mc.vue'
-import Steam from '@/views/steam.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+
+const Home = () => import('@/views/home.vue')
+const Mc = () => import('@/views/mc.vue')
+const Steam = () => import('@/views/steam.vue')
+const NotFound = () => import('@/views/NotFound.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
