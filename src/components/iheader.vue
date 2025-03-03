@@ -1,29 +1,29 @@
 <template>
-  <n-card id="iheader">
-    <n-space justify="space-between" align="center" style="width: 100%;">
+  <n-card id="iheader" style="width: 100%;" >
       <template v-if="isMobile">
         <n-button @click="toggleMenu">☰</n-button>
         <n-drawer v-model:show="showMenu" placement="left">
-          <div vertical style="display: flex;flex-direction: column; align-items: center;font-size: large">
+          <div vertical style="display: flex;font-size: large;flex-direction: column;align-items: center;">
             <router-link class="linkm" to="/" tag="button">Home</router-link>
             <router-link class="linkm" to="/steam" tag="button">Steam Status</router-link>
             <router-link class="linkm" to="/mcstatus" tag="button">Minecraft Status</router-link>
-            <span class="linkm">暗色模式 <n-switch v-model:value="localDarktheme" /></span>
+            <span class="linkm"><n-switch v-model:value="localDarktheme" /></span>
           </div>
         </n-drawer>
       </template>
-      <template v-else>
-        <router-link class="link" to="/" tag="button">Home</router-link>
-        <router-link class="link" to="/steam" tag="button">Steam Status</router-link>
-        <router-link class="link" to="/mcstatus" tag="button">Minecraft Status</router-link>
-        <span>暗色模式 <n-switch v-model:value="localDarktheme" /></span>
-      </template>
-    </n-space>
+      <div v-else style="display: flex;justify-content: space-between;">
+        <div style="display: flex;  justify-content: space-between;">
+          <router-link class="link" to="/" tag="button">Home</router-link>
+          <router-link class="link" to="/steam" tag="button">Steam Status</router-link>
+          <router-link class="link" to="/mcstatus" tag="button">Minecraft Status</router-link>
+        </div>
+        <span><n-switch v-model:value="localDarktheme" /></span>
+      </div>
   </n-card>
 </template>
 
 <script setup>
-import { NButton, NCard, NDrawer, NSpace, NSwitch } from 'naive-ui';
+import { NButton, NCard, NDrawer, NSwitch } from 'naive-ui';
 import { ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 
@@ -35,7 +35,7 @@ const emit = defineEmits(['update:darktheme']);
 
 const localDarktheme = ref(props.darktheme);
 const showMenu = ref(false);
-const isMobile = ref(window.innerWidth < 600);
+const isMobile = ref(window.innerWidth < 800);
 
 const toggleMenu = () => {
   showMenu.value = !showMenu.value;
@@ -52,19 +52,22 @@ window.addEventListener('resize', () => {
 
 <style scoped>
 #iheader {
-  box-sizing: border-box; 
+  box-sizing: border-box;
   margin-bottom: 10px;
 }
 
 .link {
-  color: var(--n-text-color); 
+  color: var(--n-text-color);
+  margin: 0 20px;
 }
+
 .linkm {
-  padding-top: 50px;
+  margin-top: 50px;
   padding-bottom: 0px;
 }
 
 .link:hover {
   background-color: var(--n-fill-color);
+  color: rgb(42, 148, 125);
 }
 </style>
