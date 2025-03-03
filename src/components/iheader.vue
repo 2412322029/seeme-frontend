@@ -7,6 +7,7 @@
             <router-link class="linkm" to="/" tag="button">Home</router-link>
             <router-link class="linkm" to="/steam" tag="button">Steam Status</router-link>
             <router-link class="linkm" to="/mcstatus" tag="button">Minecraft Status</router-link>
+            <router-link class="linkm" to="/calendar" tag="button">Calendar</router-link>
             <span class="linkm"><n-switch v-model:value="localDarktheme" /></span>
           </div>
         </n-drawer>
@@ -16,6 +17,7 @@
           <router-link class="link" to="/" tag="button">Home</router-link>
           <router-link class="link" to="/steam" tag="button">Steam Status</router-link>
           <router-link class="link" to="/mcstatus" tag="button">Minecraft Status</router-link>
+          <router-link class="link" to="/calendar" tag="button">Calendar</router-link>
         </div>
         <span><n-switch v-model:value="localDarktheme" /></span>
       </div>

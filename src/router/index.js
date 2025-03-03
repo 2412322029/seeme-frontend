@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const Home = () => import('@/views/home.vue')
 const Mc = () => import('@/views/mc.vue')
 const Steam = () => import('@/views/steam.vue')
+const Calendar = () => import('@/views/calendar.vue')
 const NotFound = () => import('@/views/NotFound.vue')
 
 const router = createRouter({
@@ -22,6 +23,11 @@ const router = createRouter({
       path: '/steam',
       name: 'steam',
       component: Steam,
+    },
+    {
+      path: '/calendar',
+      name: 'calendar',
+      component: Calendar,
     },
     {
       path: '/:pathMatch(.*)*',

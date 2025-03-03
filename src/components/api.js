@@ -5,7 +5,8 @@ const baseURL = isDevelopment ? 'http://localhost:5173/api' : location.origin;
 const axiosInstance = axios.create({
     baseURL
 });
-
+// const proxy = baseURL + '/proxy/';
+const proxy = '';
 async function fetchData(endpoint) {
     const response = await axiosInstance.get(endpoint);
     if (response.status !== 200) {
@@ -54,6 +55,29 @@ export async function get_deployment_info() {
     return fetchData(`/get_deployment_info`);
 }
 
+export async function getcalendar() {
+    const response = await axios.get(proxy+'https://api.bgm.tv/calendar');
+    if (response.status !== 200) {
+        throw new Error(response.statusText);
+    }
+    return response.data;
+}
+export async function getsubject(subject_id) {
+    const response = await axios.get(proxy+'https://api.bgm.tv/v0/subjects/'+subject_id);
+    if (response.status !== 200) {
+        throw new Error(response.statusText);
+    }
+    return response.data;
+}
+
+export async function getepisodes(subject_id) {
+    const response = await axios.get(proxy+'https://api.bgm.tv/v0/episodes?subject_id='+subject_id);
+    if (response.status !== 200) {
+        throw new Error(response.statusText);
+    }
+    return response.data;
+}
+//https://api.bgm.tv/v0/subjects/454684/characters
 export function timeAgo(time) {
     const now = new Date();
     const past = new Date(time);
