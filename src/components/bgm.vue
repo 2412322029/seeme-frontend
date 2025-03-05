@@ -28,6 +28,11 @@ const selectedItem = ref(null);
 const errors = ref("");
 const loading = ref(false);
 const loading1 = ref(false);
+const isMobile = ref(window.innerWidth < 600);
+
+window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth < 600;
+});
 
 function calendar() {
     getcalendar()
@@ -108,20 +113,21 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div v-if="calData" v-for="item in calData" :key="item.weekday.en" style="margin: 10px;">
-        <n-card :title="item.weekday.cn" style="max-width:850px;">
-            <div style="display: flex;flex-wrap: wrap;flex-direction: row;align-items: flex-start;">
+    <div v-if="calData" v-for="item in calData" :key="item.weekday.en" :style="{ margin: isMobile ? '5px' : '10px' }">
+        <n-card :title="item.weekday.cn" :style="{ maxWidth: isMobile ? '100%' : '850px' }">
+            <div :style="{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'flex-start' }">
                 <div v-for="i in item.items" :key="i.id"
-                    style="display: flex;flex-direction: column; width: 140px;margin: 10px; cursor:pointer;"
+                    :style="{ display: 'flex', flexDirection: 'column', width: isMobile ? '100px' : '140px', margin: isMobile ? '5px' : '10px', cursor: 'pointer' }"
                     @click="openDrawer(i)">
-                    <n-image lazy :src="i.images.common" width="140" height="200" object-fit="cover" preview-disabled />
-                    <n-ellipsis style="max-width: 140px">{{ i.name_cn || i.name }}</n-ellipsis>
+                    <n-image lazy :src="i.images.common" :width="isMobile ? '100' : '140'" :height="isMobile ? '150' : '200'" object-fit="cover" preview-disabled />
+                    <n-ellipsis :style="{ maxWidth: isMobile ? '100px' : '140px' }">{{ i.name_cn || i.name }}</n-ellipsis>
                 </div>
             </div>
         </n-card>
     </div>
     <div v-else>
         <n-card>
+            <n-spin size="large" />
             <p style="color: red;">{{ errors }} to fetch {{ errors.config?.url }}</p>
         </n-card>
     </div>

@@ -15,6 +15,7 @@ import {
 import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import Ai from "./ai.vue";
 import { getinfo, getlimit, timeAgo } from "./api";
 import { getphoneIcon } from "./imgmap";
 import Show_activity_window from "./show_activity_window.vue";
@@ -124,6 +125,7 @@ function handleImageError(event) {
     <n-layout>
       <n-layout-header>
         <n-card title="你在干什么?" style="margin-bottom: 10px;">
+          <Ai />
           <n-space>
             <span>时间线表示 <n-checkbox v-model:checked="showtimeline" /></span>
             <span>显示电脑 <n-checkbox v-model:checked="showwhat[0]" /></span>

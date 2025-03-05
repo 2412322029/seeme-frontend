@@ -1,13 +1,13 @@
 <template>
   <n-card id="iheader" style="width: 100%;" >
       <template v-if="isMobile">
-        <n-button @click="toggleMenu">☰</n-button>
+        <n-button @click="toggleMenu">目录</n-button>
         <n-drawer v-model:show="showMenu" placement="left">
           <div vertical style="display: flex;font-size: large;flex-direction: column;align-items: center;">
-            <router-link class="linkm" to="/" tag="button">Home</router-link>
-            <router-link class="linkm" to="/steam" tag="button">Steam Status</router-link>
-            <router-link class="linkm" to="/mcstatus" tag="button">Minecraft Status</router-link>
-            <router-link class="linkm" to="/calendar" tag="button">Calendar</router-link>
+            <router-link class="linkm" to="/" tag="button" @click.native="closeMenu">Home</router-link>
+            <router-link class="linkm" to="/steam" tag="button" @click.native="closeMenu">Steam Status</router-link>
+            <router-link class="linkm" to="/mcstatus" tag="button" @click.native="closeMenu">Minecraft Status</router-link>
+            <router-link class="linkm" to="/calendar" tag="button" @click.native="closeMenu">Calendar</router-link>
             <span class="linkm"><n-switch v-model:value="localDarktheme" /></span>
           </div>
         </n-drawer>
@@ -41,6 +41,10 @@ const isMobile = ref(window.innerWidth < 800);
 
 const toggleMenu = () => {
   showMenu.value = !showMenu.value;
+};
+
+const closeMenu = () => {
+  showMenu.value = false;
 };
 
 watch(localDarktheme, (newValue) => {

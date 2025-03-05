@@ -1,9 +1,11 @@
 <script setup>
-import { darkTheme, lightTheme, NConfigProvider, NGlobalStyle } from 'naive-ui';
-import { onMounted, ref, watch } from 'vue';
-import { RouterView } from 'vue-router';
 import iheader from '@/components/iheader.vue';
+import { darkTheme, lightTheme, NConfigProvider, NGlobalStyle, NSpin } from 'naive-ui';
+import { onMounted, ref, watch } from 'vue';
+import { RouterView, useRouter } from 'vue-router';
 const darktheme = ref(true);
+const loading = ref(false);
+const router = useRouter();
 
 onMounted(() => {
   const darkthemeValue = localStorage.getItem('darktheme');
@@ -17,14 +19,24 @@ onMounted(() => {
 watch(darktheme, (newValue) => {
   localStorage.setItem('darktheme', JSON.stringify(newValue));
 });
+
+router.beforeEach((to, from, next) => {
+  loading.value = true;
+  next();
+});
+
+router.afterEach(() => {
+  loading.value = false;
+});
 </script>
 
 <template>
   <n-config-provider :theme="darktheme ? darkTheme : lightTheme"
     style="display: flex; flex-direction: column;align-items: center;">
     <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
-    <section style="max-width: 100%;min-width: 300px;">
-      <RouterView />
+    <section style="max-width: 100%;min-width: 300px; position: relative;">
+      <n-spin size="large" v-if="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+      <RouterView v-else />
     </section>
     <n-global-style />
   </n-config-provider>

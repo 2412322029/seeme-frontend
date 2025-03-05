@@ -111,7 +111,7 @@ const copyText = async (text) => {
                 {{ errormsg.mcserveraddr }}
             </n-alert>
             <span v-if="!errormsg.mcserveraddr && mcdata" style="overflow: auto;">
-                <n-tag style="margin: 5px;">Ping to the server :{{ mclay }}</n-tag>
+                <n-tag style="margin: 5px;">Ping to the server :{{ mclay.time || mclay.error }}</n-tag>
                 <n-table :bordered="false">
                     <tbody>
                         <tr>
