@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const Home = () => import('@/views/home.vue')
+const Doing = () => import('@/views/doing.vue')
 const Mc = () => import('@/views/mc.vue')
 const Steam = () => import('@/views/steam.vue')
 const Calendar = () => import('@/views/calendar.vue')
@@ -13,6 +14,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/doing',
+      name: 'doing',
+      component: Doing,
     },
     {
       path: '/mcstatus/:address?',

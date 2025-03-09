@@ -1,31 +1,55 @@
 <template>
-  <n-card id="iheader" style="width: 100%;" >
-      <template v-if="isMobile">
-        <n-button @click="toggleMenu">目录</n-button>
-        <n-drawer v-model:show="showMenu" placement="left">
-          <div vertical style="display: flex;font-size: large;flex-direction: column;align-items: center;">
-            <router-link class="linkm" to="/" tag="button" @click.native="closeMenu">Home</router-link>
-            <router-link class="linkm" to="/steam" tag="button" @click.native="closeMenu">Steam Status</router-link>
-            <router-link class="linkm" to="/mcstatus" tag="button" @click.native="closeMenu">Minecraft Status</router-link>
-            <router-link class="linkm" to="/calendar" tag="button" @click.native="closeMenu">Calendar</router-link>
-            <span class="linkm"><n-switch v-model:value="localDarktheme" /></span>
-          </div>
-        </n-drawer>
-      </template>
-      <div v-else style="display: flex;justify-content: space-between;">
-        <div style="display: flex;  justify-content: space-between;">
-          <router-link class="link" to="/" tag="button">Home</router-link>
-          <router-link class="link" to="/steam" tag="button">Steam Status</router-link>
-          <router-link class="link" to="/mcstatus" tag="button">Minecraft Status</router-link>
-          <router-link class="link" to="/calendar" tag="button">Calendar</router-link>
+  <n-card id="iheader" style="width: 100%;">
+    <template v-if="isMobile">
+      <n-button @click="toggleMenu"> <n-icon size="15" style="margin: 2px;" :component="Bars" />
+        目录</n-button>
+      <n-drawer v-model:show="showMenu" placement="left">
+        <div vertical style="display: flex;font-size: large;flex-direction: column;align-items: flex-start;">
+          <template v-for="link in links" :key="link.to">
+            <router-link class="linkm" :to="link.to" tag="button" @click.native="closeMenu">
+              <component :is="link.icon" style="width: 15px; margin-right: 7px;" v-if="link.icon" />
+              <span>{{ link.label }}</span>
+            </router-link>
+          </template>
+          <span class="linkm">
+            <n-switch v-model:value="localDarktheme">
+              <template #checked-icon>
+                <n-icon :component="Moon" />
+              </template>
+              <template #unchecked-icon>
+                <n-icon :component="Sun" />
+              </template>
+            </n-switch>
+          </span>
         </div>
-        <span><n-switch v-model:value="localDarktheme" /></span>
+      </n-drawer>
+    </template>
+    <div v-else style="display: flex;justify-content: space-between;">
+      <div style="display: flex;  justify-content: space-between;">
+        <template v-for="link in links" :key="link.to">
+          <router-link class="link" :to="link.to" tag="button">
+            <component :is="link.icon" style="width: 15px; margin-right: 7px;" v-if="link.icon" />
+            <span>{{ link.label }}</span>
+          </router-link>
+        </template>
       </div>
+      <span style="display: flex;align-items: center;">
+        <n-switch v-model:value="localDarktheme">
+          <template #checked-icon>
+            <n-icon :component="Moon" />
+          </template>
+          <template #unchecked-icon>
+            <n-icon :component="Sun" />
+          </template>
+        </n-switch>
+      </span>
+    </div>
   </n-card>
 </template>
 
 <script setup>
-import { NButton, NCard, NDrawer, NSwitch } from 'naive-ui';
+import { Bars, Calendar, Home, Moon, Server, Steam, Sun,UserClock } from '@vicons/fa';
+import { NButton, NCard, NDrawer, NIcon, NSwitch } from 'naive-ui';
 import { ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 
@@ -39,21 +63,22 @@ const localDarktheme = ref(props.darktheme);
 const showMenu = ref(false);
 const isMobile = ref(window.innerWidth < 800);
 
-const toggleMenu = () => {
-  showMenu.value = !showMenu.value;
-};
+const links = [
+  { to: '/', label: 'Home', icon: Home },
+  { to: '/doing', label: 'Doing', icon: UserClock },
+  { to: '/steam', label: 'Steam Status', icon: Steam },
+  { to: '/mcstatus', label: 'Minecraft Status', icon: Server },
+  { to: '/calendar', label: 'Calendar', icon: Calendar }
 
-const closeMenu = () => {
-  showMenu.value = false;
-};
+];
 
-watch(localDarktheme, (newValue) => {
-  emit('update:darktheme', newValue);
-});
+const toggleMenu = () => showMenu.value = !showMenu.value;
 
-window.addEventListener('resize', () => {
-  isMobile.value = window.innerWidth < 600;
-});
+const closeMenu = () => showMenu.value = false;
+
+watch(localDarktheme, (newValue) => emit('update:darktheme', newValue));
+
+window.addEventListener('resize', () => isMobile.value = window.innerWidth < 1200);
 </script>
 
 <style scoped>
@@ -68,8 +93,20 @@ window.addEventListener('resize', () => {
 }
 
 .linkm {
-  margin-top: 50px;
-  padding-bottom: 0px;
+  padding: 20px;
+  width: calc(100% - 40px);
+}
+
+.link,
+.linkm {
+  display: flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  transition-duration: 0.4s;
 }
 
 .link:hover {

@@ -1,14 +1,20 @@
 import axios from "axios";
-
 const isDevelopment = process.env.NODE_ENV === 'development';
 export const baseURL = isDevelopment ? 'http://localhost:5173/api' : location.origin;
 const axiosInstance = axios.create({
     baseURL
 });
-// const proxy = baseURL + '/proxy/';
-const proxy = '';
+const proxy = baseURL + '/proxy?url=';
+// const proxy = '';
 async function fetchData(endpoint) {
     const response = await axiosInstance.get(endpoint);
+    if (response.status !== 200) {
+        throw new Error(response.statusText);
+    }
+    return response.data;
+}
+async function proxyfetch(endpoint) {
+    const response = await axios.get(proxy + endpoint);
     if (response.status !== 200) {
         throw new Error(response.statusText);
     }
@@ -56,28 +62,37 @@ export async function get_deployment_info() {
 }
 
 export async function getcalendar() {
-    const response = await axios.get(proxy+'https://api.bgm.tv/calendar');
-    if (response.status !== 200) {
-        throw new Error(response.statusText);
-    }
-    return response.data;
+    return proxyfetch(`https://api.bgm.tv/calendar`);
 }
 export async function getsubject(subject_id) {
-    const response = await axios.get(proxy+'https://api.bgm.tv/v0/subjects/'+subject_id);
-    if (response.status !== 200) {
-        throw new Error(response.statusText);
-    }
-    return response.data;
-}
-
-export async function getepisodes(subject_id) {
-    const response = await axios.get(proxy+'https://api.bgm.tv/v0/episodes?subject_id='+subject_id);
-    if (response.status !== 200) {
-        throw new Error(response.statusText);
-    }
-    return response.data;
+    return proxyfetch('https://api.bgm.tv/v0/subjects/'+subject_id);
 }
 //https://api.bgm.tv/v0/subjects/454684/characters
+export async function getepisodes(subject_id) {
+    return proxyfetch('https://api.bgm.tv/v0/episodes?subject_id='+subject_id);
+}
+export async function gethitokoto() {
+    const response = await axios.get("https://international.v1.hitokoto.cn?c=a&c=b&c=c&c=d&c=h&c=i&c=j&c=k");
+    if (response.status !== 200) {
+        throw new Error(response.statusText);
+    }
+    const data = response.data;
+    return {
+        id: data.id,
+        uuid: data.uuid,
+        hitokoto: data.hitokoto,
+        type: data.type,
+        from: data.from,
+        from_who: data.from_who,
+        creator: data.creator,
+        creator_uid: data.creator_uid,
+        reviewer: data.reviewer,
+        commit_from: data.commit_from,
+        created_at: data.created_at,
+        length: data.length
+    };
+}
+
 export function timeAgo(time) {
     const now = new Date();
     const past = new Date(time);

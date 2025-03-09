@@ -1,9 +1,9 @@
 <script setup>
 import myfooter from '@/components/myfooter.vue';
-import note from '@/components/note.vue';
+import pcstatus from '@/components/pcstatus.vue';
 </script>
 
 <template>
-    <note />
-    <myfooter />
+  <pcstatus />
+  <myfooter />
 </template>

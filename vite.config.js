@@ -1,6 +1,6 @@
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
-import { terser } from 'rollup-plugin-terser';
+import { terser } from "rollup-plugin-terser";
 import { defineConfig } from "vite";
 import vueDevTools from "vite-plugin-vue-devtools";
 
@@ -13,7 +13,7 @@ export default defineConfig({
       compress: {
         drop_console: true, // 去除 console.log
         drop_debugger: true, // 去除 debugger
-        pure_funcs: ['console.info', 'console.debug'], // 去除 console.info 和 console.debug
+        pure_funcs: ["console.info", "console.debug"], // 去除 console.info 和 console.debug
       },
       format: {
         comments: false, // 去除注释
@@ -31,9 +31,16 @@ export default defineConfig({
         assetFileNames: (assetInfo) => {
           // 匹配图片文件后缀
           if (/\.(png|jpg|jpeg|gif|svg)$/.test(assetInfo.name)) {
-            return `assets/[name].[ext]`;  // 不添加 hash 值
+            return `assets/[name].[ext]`; // 不添加 hash 值
           }
           return `assets/[name]-[hash].[ext]`; // 其他资源文件添加 hash 值
+        },
+        manualChunks(id) {
+          // 如果是 Vue 或其他外部库，单独打包到一个 chunk
+          if (id.includes("node_modules")) {
+            return "vendors";
+          }
+          return "app";
         },
       },
     },
