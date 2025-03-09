@@ -35,8 +35,12 @@ router.afterEach(() => {
     style="display: flex; flex-direction: column;align-items: center;">
     <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
     <section style="max-width: 100%;min-width: 300px; position: relative;">
-      <n-spin size="large" v-if="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-      <RouterView v-else />
+      <Suspense>
+        <n-spin size="large" v-if="loading"
+          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+        <RouterView v-else />
+      </Suspense>
+
     </section>
     <n-global-style />
   </n-config-provider>

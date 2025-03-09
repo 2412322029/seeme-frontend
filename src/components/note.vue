@@ -1,23 +1,34 @@
 <template>
     <div class="start-page">
-        <h1>Welcome to the Start Page</h1>
-        <p>
-            TODO : Add some content here
-        </p>
+        <div v-for="item in result.list" :key="item.id">
+            <h1>
+                <router-link :to="{ name: 'page', params: { id: item.noteId } }">
+                    {{ item.metadata.content.title }}
+                </router-link>
+            </h1>
+            <p v-html="md.render(item.metadata.content.summary)"></p>
+            <hr>
+        </div>
     </div>
-    <!-- <iframe src="https://xlog.not404.cc" frameborder="0" style="width: 100%; height: 60vh;"></iframe> -->
-
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
-const message = ref('Welcome to the Start Page');
+import markdownit from 'markdown-it';
+import { onMounted, ref } from 'vue';
+import { getxlog } from './api';
+const md = markdownit()
+const result = ref('')
+onMounted(async () => {
+    const res = await getxlog()
+    result.value = res
+    console.log(res)
+})
 </script>
 
 <style scoped>
 .start-page {
-    text-align: center;
+    /* text-align: center; */
+    max-width: 800px;
 }
 
 h1 {
@@ -27,5 +38,11 @@ h1 {
 
 p {
     font-size: 1.2em;
+}
+img{
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 </style>

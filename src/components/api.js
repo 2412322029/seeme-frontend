@@ -92,7 +92,9 @@ export async function gethitokoto() {
         length: data.length
     };
 }
-
+export async function getxlog(subject_id) {
+    return proxyfetch("https://xlog.not404.cc/api/pages&characterId=50877&type=post&type=portfolio&visibility=published&useStat=true&limit=18&sortType=latest");
+}
 export function timeAgo(time) {
     const now = new Date();
     const past = new Date(time);

@@ -35,13 +35,13 @@ export default defineConfig({
           }
           return `assets/[name]-[hash].[ext]`; // 其他资源文件添加 hash 值
         },
-        manualChunks(id) {
-          // 如果是 Vue 或其他外部库，单独打包到一个 chunk
-          if (id.includes("node_modules")) {
-            return "vendors";
-          }
-          return "app";
-        },
+        // manualChunks(id) {
+        //   // 如果是 Vue 或其他外部库，单独打包到一个 chunk
+        //   if (id.includes("node_modules")) {
+        //     return "vendors";
+        //   }
+        //   return "app";
+        // },
       },
     },
   },

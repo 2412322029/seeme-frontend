@@ -22,10 +22,24 @@ a,
     place-items: center;
   }
 }
-table{
+
+table {
   overflow: auto;
 }
+
 .not-found {
   text-align: center;
   margin-top: 50px;
+}
+
+img,code,pre {
+  max-width: 100%;
+  /* 设置图片最大宽度 */
+  height: auto;
+  /* 保持图片比例 */
+}
+
+code,pre {
+  white-space: pre-wrap;
+  /* 保留换行符，同时允许自动换行 */
 }
