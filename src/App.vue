@@ -1,5 +1,6 @@
 <script setup>
 import iheader from '@/components/iheader.vue';
+import myfooter from '@/components/myfooter.vue';
 import { darkTheme, lightTheme, NConfigProvider, NGlobalStyle, NSpin } from 'naive-ui';
 import { onMounted, ref, watch } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
@@ -34,7 +35,7 @@ router.afterEach(() => {
   <n-config-provider :theme="darktheme ? darkTheme : lightTheme"
     style="display: flex; flex-direction: column;align-items: center;">
     <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
-    <section style="max-width: 100%;min-width: 300px; position: relative;">
+    <section style="max-width: 800px;min-width: 300px;min-height: 90vh; position: relative;width: 100%;">
       <Suspense>
         <n-spin size="large" v-if="loading"
           style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
@@ -42,6 +43,7 @@ router.afterEach(() => {
       </Suspense>
 
     </section>
+    <myfooter />
     <n-global-style />
   </n-config-provider>
 </template>

@@ -1,9 +1,10 @@
 <template>
-  <footer style="display: flex; align-items: center;justify-content: center;margin:40px 10px;flex-direction: column">
+  <footer style="display: flex; align-items: center;justify-content: center;width: 100%;padding-top: 10px;
+  margin:10px;flex-direction: column;border-top: 1px solid rgb(39, 39, 42);">
     <span style="display: flex;flex-wrap: wrap;align-items: center; justify-content: center;">
-      <n-tag :bordered="false" type="info" style="margin: 5px;">Deploy Time: {{ devInfo.deploy_time }}</n-tag>
-      <n-tag :bordered="false" type="info" style="margin: 5px;">Git Hash: {{ devInfo.git_hash }}</n-tag>    
-      <n-tag :bordered="false" type="info" style="margin: 5px;">Access Count: {{ devInfo.access_count }}</n-tag>    
+      <n-tag :bordered="false" size="small" style="margin: 5px;">Deploy Time: {{ devInfo.deploy_time }}</n-tag>
+      <n-tag :bordered="false" size="small" style="margin: 5px;">Git Hash: {{ devInfo.git_hash }}</n-tag>    
+      <n-tag :bordered="false" size="small" style="margin: 5px;">Access Count: {{ devInfo.access_count }}</n-tag>    
     </span>
     <div v-if="hitokoto">
       <span>{{ hitokoto.hitokoto }} —— {{ hitokoto.from }}
@@ -13,9 +14,8 @@
         
       </span>
     </div>
-    <div>
-      <span>made by </span>
-      <a href="https://github.com/2412322029/seeme" target="_blank">https://github.com/2412322029/seeme</a>
+    <div style="padding: 10px;">
+      <span>© 2025 Lolik | Powered by <a href="https://github.com/2412322029/seeme" target="_blank">seeme</a></span>
     </div>
     <n-button
       v-show="showButton"

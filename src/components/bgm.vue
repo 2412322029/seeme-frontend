@@ -114,10 +114,10 @@ onBeforeMount(() => {
 
 <template>
     <div v-if="calData" v-for="item in calData" :key="item.weekday.en" :style="{ margin: isMobile ? '5px' : '10px' }">
-        <n-card :title="item.weekday.cn" :style="{ maxWidth: isMobile ? '100%' : '850px' }">
-            <div :style="{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'flex-start' }">
-                <div v-for="i in item.items" :key="i.id"
-                    :style="{ display: 'flex', flexDirection: 'column', width: isMobile ? '100px' : '140px', margin: isMobile ? '5px' : '10px', cursor: 'pointer' }"
+        <n-card :title="item.weekday.cn" :style="{ maxWidth: isMobile ? '100%' : '800px' }">
+            <div :style="{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'flex-start' }" style="justify-content: center;">
+                <div v-for="i in item.items" :key="i.id" 
+                    :style="{ display: 'flex', flexDirection: 'column', width: isMobile ? '80px' : '120px', margin: isMobile ? '5px' : '10px', cursor: 'pointer' }"
                     @click="openDrawer(i)">
                     <n-image lazy :src="i.images.common" :width="isMobile ? '100' : '140'" :height="isMobile ? '150' : '200'" object-fit="cover" preview-disabled />
                     <n-ellipsis :style="{ maxWidth: isMobile ? '100px' : '140px' }">{{ i.name_cn || i.name }}</n-ellipsis>

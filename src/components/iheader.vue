@@ -1,14 +1,17 @@
 <template>
-  <n-card id="iheader" style="width: 100%;">
+  <header id="iheader"
+    style="width: 100%;border-bottom: 1px solid rgb(39, 39, 42);display: flex;justify-content: center;">
     <template v-if="isMobile">
-      <n-button @click="toggleMenu"> <n-icon size="15" style="margin: 2px;" :component="Bars" />
-        目录</n-button>
+      <div @click="toggleMenu" style="display: flex;justify-content: center; align-items: center; width: 100%;">
+        <n-icon size="15" style="margin: 5px;" :component="Bars" />
+        <span>目录</span>
+      </div>
       <n-drawer v-model:show="showMenu" placement="left">
         <div vertical style="display: flex;font-size: large;flex-direction: column;align-items: flex-start;">
           <template v-for="link in links" :key="link.to">
             <router-link class="linkm" :to="link.to" tag="button" @click.native="closeMenu">
               <component :is="link.icon" style="width: 15px; margin-right: 7px;" v-if="link.icon" />
-              <span>{{ link.label }}</span>
+              <span >{{ link.label }}</span>
             </router-link>
           </template>
           <span class="linkm">
@@ -24,12 +27,13 @@
         </div>
       </n-drawer>
     </template>
-    <div v-else style="display: flex;justify-content: space-between;">
+    <div v-else style="display: flex;justify-content: space-between; width: 800px;">
       <div style="display: flex;  justify-content: space-between;">
         <template v-for="link in links" :key="link.to">
-          <router-link class="link" :to="link.to" tag="button">
+          <router-link class="link" :to="link.to" tag="button" style="font-size: small;" 
+          :style="{ color: $route.path === link.to ? 'rgb(42, 148, 125)' : '' }">
             <component :is="link.icon" style="width: 15px; margin-right: 7px;" v-if="link.icon" />
-            <span>{{ link.label }}</span>
+            <span >{{ link.label }}</span>
           </router-link>
         </template>
       </div>
@@ -44,12 +48,12 @@
         </n-switch>
       </span>
     </div>
-  </n-card>
+  </header>
 </template>
 
 <script setup>
-import { Bars, Calendar, Home, Moon, Server, Steam, Sun,UserClock } from '@vicons/fa';
-import { NButton, NCard, NDrawer, NIcon, NSwitch } from 'naive-ui';
+import { Bars, Calendar, Home, Moon, Server, Steam, Sun, UserClock } from '@vicons/fa';
+import { NDrawer, NIcon, NSwitch } from 'naive-ui';
 import { ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 
@@ -78,18 +82,20 @@ const closeMenu = () => showMenu.value = false;
 
 watch(localDarktheme, (newValue) => emit('update:darktheme', newValue));
 
-window.addEventListener('resize', () => isMobile.value = window.innerWidth < 1200);
+window.addEventListener('resize', () => isMobile.value = window.innerWidth < 900);
 </script>
 
 <style scoped>
 #iheader {
   box-sizing: border-box;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  padding: 10px;
 }
 
 .link {
   color: var(--n-text-color);
   margin: 0 20px;
+  margin-left: 5px
 }
 
 .linkm {

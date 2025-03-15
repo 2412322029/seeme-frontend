@@ -93,7 +93,7 @@ export async function gethitokoto() {
     };
 }
 export async function getxlog(subject_id) {
-    return proxyfetch("https://xlog.not404.cc/api/pages&characterId=50877&type=post&type=portfolio&visibility=published&useStat=true&limit=18&sortType=latest");
+    return fetchData("/proxy_xlog");
 }
 export function timeAgo(time) {
     const now = new Date();
@@ -112,4 +112,17 @@ export function timeAgo(time) {
     } else {
         return `${time}(${days}天前)`;
     }
+}
+
+export function formatDate(d) {
+    if (!d) return '';
+    const date = new Date(d);
+    const pad = (num) => (num < 10 ? `0${num}` : num);
+    const year = date.getUTCFullYear();
+    const month = pad(date.getUTCMonth() + 1); 
+    const day = pad(date.getUTCDate());
+    const hours = pad(date.getUTCHours());
+    const minutes = pad(date.getUTCMinutes());
+    const seconds = pad(date.getUTCSeconds());
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }

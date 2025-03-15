@@ -1,11 +1,8 @@
 <script setup>
 import { ShareAlt } from "@vicons/fa";
 import {
-    darkTheme,
-    lightTheme,
     NAlert,
     NAvatar, NButton, NCard,
-    NConfigProvider,
     NDynamicTags,
     NIcon,
     NInput,
@@ -23,7 +20,6 @@ import { McInfo, Mclatency } from "./api";
 const route = useRoute(); // 获取当前路由对象
 const router = useRouter(); // 获取路由实例
 const mcserveraddr = ref(route.params.address || '');
-const darktheme = ref(true);
 const errormsg = reactive({
     "mcserveraddr": "",
 });
@@ -98,9 +94,6 @@ onBeforeMount(() => {
         getMcInfo();
     }
 });
-watch(darktheme, (newValue) => {
-    localStorage.setItem('darktheme', JSON.stringify(newValue));
-});
 // 复制文本的函数
 const copyText = async (text) => {
     try {
@@ -120,7 +113,7 @@ const copyText = async (text) => {
 </script>
 
 <template>
-    <n-config-provider :theme="darktheme ? darkTheme : lightTheme">
+
         <n-card ref="mc" title="Mincraft Server Status" style="min-width: 300px; width: 100%;max-width: 800px; overflow: auto;">
             <n-input placeholder="host:port" v-model:value="mcserveraddr" clearable autosize
                 style="width: 80%; margin: 5px;" />
@@ -186,5 +179,4 @@ const copyText = async (text) => {
             </span>
             <n-skeleton v-else text :repeat="2" />
         </n-card>
-    </n-config-provider>
 </template>
