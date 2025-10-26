@@ -52,7 +52,8 @@
 </template>
 
 <script setup>
-import { Bars, Calendar, Home, Moon, Server, Steam, Sun, UserClock } from '@vicons/fa';
+//https://www.xicons.org/#/
+import { Bars, Calendar, Home, Moon, Server, Steam, Sun, UserClock,StickyNote } from '@vicons/fa';
 import { NDrawer, NIcon, NSwitch } from 'naive-ui';
 import { ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
@@ -68,7 +69,8 @@ const showMenu = ref(false);
 const isMobile = ref(window.innerWidth < 800);
 
 const links = [
-  { to: '/', label: 'Home', icon: Home },
+  { to: '/', label: 'home', icon: Home },
+  { to: '/note', label: 'Note', icon: StickyNote },
   { to: '/doing', label: 'Doing', icon: UserClock },
   { to: '/steam', label: 'Steam Status', icon: Steam },
   { to: '/mcstatus', label: 'Minecraft Status', icon: Server },
