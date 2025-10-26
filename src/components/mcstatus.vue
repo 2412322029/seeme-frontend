@@ -239,14 +239,5 @@ onMounted(() => {
     </span>
     <n-skeleton v-else text :repeat="2" />
   </n-card>
-  <div style="margin-top: 10px; text-align: center">
-    <!-- style="position: fixed; top: 50px; left: 20px; width: 220px" -->
-    <a
-      href="https://tsarvar.com/servers/minecraft/49.234.20.77:25565"
-      data-tsarvarServerId="483478"
-    >
-      神秘服务器 🎭 𝔐𝔞𝔰𝔮𝔲𝔢𝔯𝔞𝔡𝔢
-    </a>
-  </div>
 </template>
 <style scoped></style>

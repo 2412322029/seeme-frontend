@@ -49,7 +49,7 @@ import markdownit from "markdown-it";
 import mditjs from "markdown-it-highlightjs/core";
 import { ref } from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
-import { formatDate } from "./api";
+import { formatDate, ipfsToCrossbell } from "./api";
 hljs.registerLanguage("javascript", javascript);
 hljs.registerLanguage("powershell", powershell);
 hljs.registerLanguage("bash", bash);
@@ -83,11 +83,7 @@ indexer.note
   .catch((err) => {
     error.value = err;
   });
-const ipfsToCrossbell = (url) =>
-  url.replace(
-    /ipfs:\/\/([a-zA-Z0-9]+)/g, // 全局匹配
-    "https://ipfs.crossbell.io/ipfs/$1?img-quality=75&img-format=auto&img-onerror=redirect"
-  );
+
 onBeforeRouteUpdate((to, from, next) => {
   nodeid.value = to.params.address || "";
   next();

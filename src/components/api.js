@@ -126,3 +126,10 @@ export function formatDate(d) {
     const seconds = pad(date.getUTCSeconds());
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export const ipfsToCrossbell = (ipfs) =>
+    ipfs &&
+  ipfs.replace(
+    /ipfs:\/\/([a-zA-Z0-9]+)/g, // 全局匹配
+    "https://ipfs.crossbell.io/ipfs/$1?img-quality=75&img-format=auto&img-onerror=redirect"
+  );
