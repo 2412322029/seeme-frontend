@@ -81,7 +81,7 @@
                       </div>
                     </div>
                     <span class="name">{{ m.name || '匿名' }}</span>
-                    <n-tag :bordered="false" size="small" class="ip">IP: {{ m.loca||"未知" }}  </n-tag>
+                    <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location||"未知" }}  </n-tag>
                     <!-- <a class="email" v-if="m.email" :href="'mailto:' + m.email">📧</a> -->
                   </div>
                   
@@ -92,7 +92,7 @@
                     </div>
                 <div class="content"
                   :style="m._expanded ? {} : { display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }"
-                  @click="m._expanded = !m._expanded"
+                  
                   @keydown.enter.prevent="m._expanded = !m._expanded"
                   tabindex="0"
                   role="button"
@@ -710,6 +710,94 @@ ul {
   #recaptcha-status-inline {
     margin-left: 0;
     margin-top: 6px;
+  }
+}
+
+/* 优化移动端留言列表显示 */
+@media (max-width: 700px) {
+  .messages-section {
+    padding: 10px;
+  }
+  .messages-section h3 {
+    font-size: 16px;
+    gap: 8px;
+  }
+  .refresh-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid rgba(0,0,0,0.08);
+    cursor: pointer;
+  }
+
+  .messages-list {
+    gap: 8px;
+  }
+
+  .message-item {
+    padding: 12px;
+    border-top: none;
+    border-bottom: 1px solid rgba(121,121,121,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .message-item .meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .meta-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .avatar-wrap img,
+  .avatar-letter {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .message-item .content {
+    margin-left: 0;
+    margin-top: 4px;
+    font-size: 14px;
+  }
+
+  .message-item .ua,
+  .message-item .ip,
+  .message-item .time {
+    font-size: 12px;
+  }
+
+  /* 表单在窄屏下垂直排列，输入框占满宽度 */
+  .form-top-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .form-top-row n-input {
+    width: 100% !important;
+  }
+
+  .md-preview {
+    max-height: 240px;
+  }
+
+  /* 提交按钮在移动端放在底部并占满宽度 */
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .actions n-button[type="primary"] {
+    width: 100%;
   }
 }
 </style>
