@@ -4,7 +4,7 @@ export const baseURL = isDevelopment ? 'http://localhost:5173/api' : location.or
 const axiosInstance = axios.create({
     baseURL
 });
-const proxy = baseURL + '/proxy?url=';
+export const proxy = baseURL + '/proxy?url=';
 // const proxy = '';
 async function fetchData(endpoint) {
     const response = await axiosInstance.get(endpoint);
@@ -133,3 +133,25 @@ export const ipfsToCrossbell = (ipfs) =>
     /ipfs:\/\/([a-zA-Z0-9]+)/g, // 全局匹配
     "https://ipfs.crossbell.io/ipfs/$1?img-quality=75&img-format=auto&img-onerror=redirect"
   );
+
+export async function leaveMessage({ name, email, content, recaptcha_token }) {
+  const res = await axiosInstance.post('/leave_message', {
+    name, email, content, recaptcha_token
+  }, {
+    headers: { 'Recaptcha-Token': recaptcha_token || '' }
+  });
+  return res.data;
+}
+export async function googleSiteVerifyProxy(secret, token, remoteip = '') {
+  const url = 'https://www.google.com/recaptcha/api/siteverify?secret='
+    + encodeURIComponent(secret)
+    + '&response=' + encodeURIComponent(token)
+    + (remoteip ? '&remoteip=' + encodeURIComponent(remoteip) : '');
+  return proxyfetch(url);
+}
+
+
+// 获取留言列表（后端路由：/get_messages）
+export async function getMessages() {
+  return fetchData('/get_messages');
+}

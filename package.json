@@ -13,8 +13,10 @@
     "axios": "^1.8.2",
     "crossbell": "^1.12.1",
     "highlight.js": "^11.11.1",
+    "js-md5": "^0.8.3",
     "markdown-it": "^14.1.0",
     "markdown-it-highlightjs": "^4.2.0",
+    "ua-parser-js": "^2.0.6",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue3-toastify": "^0.2.8"
