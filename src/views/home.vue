@@ -85,7 +85,7 @@
                     <!-- <a class="email" v-if="m.email" :href="'mailto:' + m.email">📧</a> -->
                   </div>
                   
-                  <div>
+                  <div class="meta-right">
                     <n-tag :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}  </n-tag>
                     <span class="time" :title="m.report_time">{{ formatReportTime(m.report_time) }}</span>
                   </div>
@@ -715,9 +715,6 @@ ul {
 
 /* 优化移动端留言列表显示 */
 @media (max-width: 700px) {
-  .messages-section {
-    padding: 10px;
-  }
   .messages-section h3 {
     font-size: 16px;
     gap: 8px;
@@ -737,18 +734,17 @@ ul {
   }
 
   .message-item {
-    padding: 12px;
     border-top: none;
     border-bottom: 1px solid rgba(121,121,121,0.08);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    /* gap: 8px; */
   }
 
   .message-item .meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    /* gap: 6px; */
   }
 
   .meta-left {
@@ -756,12 +752,15 @@ ul {
     align-items: center;
     gap: 8px;
   }
-
+  .meta-right {
+    width: 100%;
+  }
   .avatar-wrap img,
   .avatar-letter {
     width: 36px;
     height: 36px;
     font-size: 16px;
+    min-width: 36px;
   }
 
   .message-item .content {
@@ -769,11 +768,17 @@ ul {
     margin-top: 4px;
     font-size: 14px;
   }
-
+  .message-item .name {
+    text-wrap: nowrap;
+  }
   .message-item .ua,
   .message-item .ip,
   .message-item .time {
     font-size: 12px;
+    text-wrap: nowrap;
+  }
+  .message-item .time {
+    float: inline-end;
   }
 
   /* 表单在窄屏下垂直排列，输入框占满宽度 */
