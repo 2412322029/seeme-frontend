@@ -150,8 +150,21 @@ export async function googleSiteVerifyProxy(secret, token, remoteip = '') {
   return proxyfetch(url);
 }
 
-
 // 获取留言列表（后端路由：/get_messages）
 export async function getMessages() {
   return fetchData('/get_messages');
+}
+
+// 获取 paste（后端 GET /c/<mmd>）
+export async function getPaste(key) {
+  const res = await axiosInstance.get(`/c/${encodeURIComponent(key)}`);
+  return res.data;
+}
+
+// 设置 paste（后端 POST /c/<mmd>）
+export async function setPaste(key, data) {
+  const res = await axiosInstance.post(`/c/${encodeURIComponent(key)}`, { data }, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return res.data;
 }

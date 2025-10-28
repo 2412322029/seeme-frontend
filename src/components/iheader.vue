@@ -30,10 +30,15 @@
     <div v-else style="display: flex;justify-content: space-between; width: 800px;">
       <div style="display: flex;  justify-content: space-between;">
         <template v-for="link in links" :key="link.to">
-          <router-link class="link" :to="link.to" tag="button" style="font-size: small;" 
-          :style="{ color: $route.path === link.to ? 'rgb(42, 148, 125)' : '' }">
+          <router-link
+            class="link"
+            :to="link.to"
+            tag="button"
+            style="font-size: small;"
+            :style="{ color: (link.to === '/' ? $route.path === '/' : $route.path.startsWith(link.to)) ? 'rgb(42, 148, 125)' : '' }"
+          >
             <component :is="link.icon" style="width: 15px; margin-right: 7px;" v-if="link.icon" />
-            <span >{{ link.label }}</span>
+            <span>{{ link.label }}</span>
           </router-link>
         </template>
       </div>
@@ -53,11 +58,12 @@
 
 <script setup>
 //https://www.xicons.org/#/
-import { Bars, Calendar, Home, Moon, Server, Steam, Sun, UserClock,StickyNote } from '@vicons/fa';
+import { Bars, Calendar, Home, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock } from '@vicons/fa';
 import { NDrawer, NIcon, NSwitch } from 'naive-ui';
 import { ref, watch } from 'vue';
-import { RouterLink } from 'vue-router';
-
+import { RouterLink,useRoute } from 'vue-router';
+const routes = useRoute(); // 获取当前路由对象
+const keysss = ref(routes.params.id || "");
 const props = defineProps({
   darktheme: Boolean
 });
@@ -67,14 +73,22 @@ const emit = defineEmits(['update:darktheme']);
 const localDarktheme = ref(props.darktheme);
 const showMenu = ref(false);
 const isMobile = ref(window.innerWidth < 800);
+// 生成3位 a-z 随机字符串
+const gen3Lower = () => {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  const bytes = new Uint8Array(3);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, b => letters[b % 26]).join('');
+};
 
 const links = [
   { to: '/', label: 'home', icon: Home },
   { to: '/note', label: 'Note', icon: StickyNote },
   { to: '/doing', label: 'Doing', icon: UserClock },
   { to: '/steam', label: 'Steam Status', icon: Steam },
-  { to: '/mcstatus', label: 'Minecraft Status', icon: Server },
-  { to: '/calendar', label: 'Calendar', icon: Calendar }
+  { to: '/mcstatus', label: 'MC Status', icon: Server },
+  { to: '/calendar', label: 'Calendar', icon: Calendar },
+  { to: '/e/' + keysss.value || gen3Lower(), label: 'Paste', icon: Paste }
 
 ];
 

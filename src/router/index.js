@@ -8,6 +8,7 @@ const Mc = () => import('@/views/mc.vue')
 const Steam = () => import('@/views/steam.vue')
 const Calendar = () => import('@/views/calendar.vue')
 const NotFound = () => import('@/views/NotFound.vue')
+const Paste = () => import('@/views/paste.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,16 @@ const router = createRouter({
       meta: {
         title: 'Calendar',
         description: 'A calendar view for anime',
+      },
+    },
+    {
+      path: '/e/:id?',
+      name: 'Paste',
+      component: Paste,
+      meta: {
+        title: 'paste',
+        description: 'A paste',
+        hideLayout: true,
       },
     },
     {
