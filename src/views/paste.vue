@@ -114,8 +114,8 @@
 
 <script setup>
 import { AlignRight, Star } from "@vicons/fa";
-import { NButton, NCheckbox, NDrawer, NDynamicTags, NIcon, NInput } from "naive-ui";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { NButton, NCheckbox, NDrawer, NDynamicTags, NIcon, NInput, useDialog } from "naive-ui";
+import { computed, h, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaste, setPaste } from "../components/api"; // 相对路径与项目结构一致
 
@@ -150,28 +150,7 @@ function utf8Size(str) {
   }
 }
 
-async function load() {
-  error.value = "";
-  success.value = "";
-  if (!validKey.value) {
-    error.value = "Key 无效";
-    return;
-  }
-  loading.value = true;
-  try {
-    const res = await getPaste(key.value.trim());
-    // 后端返回 { key, data } 或 { key, data: "" }
-    content.value =
-      res && typeof res.data === "string" ? res.data : (res && res.data) || "";
-    success.value = "读取成功";
-  } catch (e) {
-    console.error(e);
-    error.value = "读取失败：" + (e && e.message ? e.message : String(e));
-  } finally {
-    loading.value = false;
-    setTimeout(() => (success.value = ""), 2500);
-  }
-}
+
 // 新增：复制到剪贴板（兼容检测与 fallback）
 async function copyToClipboard() {
   error.value = "";
@@ -373,16 +352,16 @@ function onSelectChangeValue(path, val){
   selectedMap[path] = !!val;
 }
 
-// 备注 tags 失焦/变更时保存
-function onNoteBlur(f){
-  f.editing = false;
-  saveFavorites();
-}
+// // 备注 tags 失焦/变更时保存
+// function onNoteBlur(f){
+//   f.editing = false;
+//   saveFavorites();
+// }
 
-// 备注由 NDynamicTags 编辑时也保存
-function onTagsChange(){
-  saveFavorites();
-}
+// // 备注由 NDynamicTags 编辑时也保存
+// function onTagsChange(){
+//   saveFavorites();
+// }
 
 // toggleFavorite 保持，addFavorite 使用 tags 兼容
 function toggleFavorite() {
@@ -398,7 +377,6 @@ function toggleFavorite() {
   setTimeout(() => (success.value = ""), 2000);
 }
 
-/* ========== 在保存后自动加入收藏并设置 savedFlag = true ========== */
 async function save() {
   error.value = "";
   success.value = "";
@@ -406,7 +384,9 @@ async function save() {
     error.value = "Key 无效";
     return;
   }
-  const size = utf8Size(content.value || "");
+  const k = key.value.trim();
+  const txt = (content.value || '');
+  const size = utf8Size(txt);
   if (size === 0) {
     error.value = "内容不能为空";
     return;
@@ -417,11 +397,32 @@ async function save() {
   }
   saving.value = true;
   try {
-    const res = await setPaste(key.value.trim(), content.value);
+    // 先安全地获取远端当前内容并比较
+    // let remote = '';
+    // try {
+    //   const r = await getPaste(k);
+    //   remote = (r && typeof r.data === "string") ? r.data : (r && r.data) || '';
+    // } catch (e) {
+    //   // 若获取远端失败，不阻止保存，但提示用户
+    //   console.warn('读取远端内容失败，直接尝试保存', e);
+    // }
+    // if (remote !== undefined && remote !== null && remote !== '' && remote !== txt) {
+    //   // 若远端与编辑内容不同，提示是否覆盖远端（确定=覆盖，取消=中止保存）
+    //   const doOverwrite = window.confirm("检测到远端内容与当前编辑内容不同。\n点击“确定”将覆盖远端内容并保存；点击“取消”将中止保存。");
+    //   if (!doOverwrite) {
+    //     saving.value = false;
+    //     messageStatusTemp('已取消保存');
+    //     return;
+    //   }
+    // }
+    // 执行保存
+    const res = await setPaste(k, txt);
     if (res && (res.status === "ok" || res.key)) {
       success.value = "保存成功";
-      savedFlag.value = true; // 允许显示收藏按钮
-      // 保存成功后自动加入收藏（若尚未收藏）
+      // 更新本地草稿为已保存内容
+      saveLocalDraft(k, txt);
+      savedFlag.value = true;
+      // 若尚未收藏则自动收藏（原逻辑）
       if (validKey.value && !isFavorited.value) addFavorite(currentPath.value);
     } else {
       error.value = "保存失败";
@@ -435,23 +436,34 @@ async function save() {
   }
 }
 
+// 简短消息提示（用于取消等非错误信息）
+function messageStatusTemp(txt) {
+	success.value = txt;
+	setTimeout(()=> success.value = '', 1800);
+}
+
 /* 初始化时加载收藏 */
 onMounted(() => {
-  document.title = "Paste - Share Text";
-  loadFavorites();
-  const rid = route.params.id;
-  if (rid && typeof rid === "string") {
-    const v = rid.trim();
-    // 如果是合法的 3 字母 key，则自动加载
-    if (/^[A-Za-z]{3}$/.test(v)) {
-      key.value = v;
-      // 异步加载但不阻塞 mounted
-      load();
-    } else if (v.length > 0) {
-      // 填入但不自动触发加载，方便用户修正
-      key.value = v.slice(0, 3);
-    }
-  }
+	document.title = "Paste - Share Text";
+	loadFavorites();
+	// 在初始化时，如果 route 提供 id，按原逻辑处理（无需另外强制覆盖）
+	const rid = route.params.id;
+	if (rid && typeof rid === "string") {
+		const v = rid.trim();
+		if (/^[A-Za-z]{3}$/.test(v)) {
+			key.value = v;
+			load();
+		} else if (v.length > 0) {
+			key.value = v.slice(0,3);
+		}
+	}
+	// 启动自动保存（每 3000ms）
+	startAutoSave(3000);
+});
+
+/* 新增：组件卸载时清理定时器 */
+onUnmounted(() => {
+  stopAutoSave();
 });
 
 /* 监听 key/路由 变化，清除提示（保持其他行为） */
@@ -466,6 +478,161 @@ watch(() => route.params.id, (nid) => {
     }
   }
 });
+
+// 添加：本地草稿前缀与辅助函数（改为：不保存空白内容）
+const LOCAL_DRAFT_PREFIX = 'paste_local:';
+function getLocalDraft(k) {
+	try {
+		if (!k) return null;
+		const raw = localStorage.getItem(LOCAL_DRAFT_PREFIX + k);
+		return raw === null ? null : raw;
+	} catch (_) {
+		return null;
+	}
+}
+function saveLocalDraft(k, txt) {
+	try {
+		if (!k) return;
+		// 如果内容为空或仅空白，则移除本地草稿，避免保存空字符串产生冲突提示
+		if (!txt || (typeof txt === 'string' && txt.trim() === '')) {
+			localStorage.removeItem(LOCAL_DRAFT_PREFIX + k);
+			return;
+		}
+		localStorage.setItem(LOCAL_DRAFT_PREFIX + k, String(txt));
+	} catch (_) {}
+}
+function clearLocalDraft(k) {
+	try {
+		if (!k) return;
+		localStorage.removeItem(LOCAL_DRAFT_PREFIX + k);
+	} catch (_) {}
+}
+
+// 使用 Naive UI Dialog 显示差异并返回用户选择（'remote'|'local'）
+const dialog = useDialog();
+
+function computeSideBySideDiffHTML(remote, local) {
+  const rLines = (remote || '').split(/\r?\n/);
+  const lLines = (local || '').split(/\r?\n/);
+  const max = Math.max(rLines.length, lLines.length);
+  // 构建表格：左列 remote（-），右列 local（+），不同行高亮
+  let html = '<div style="display:flex;gap:12px;font-family:monospace;">';
+  html += '<div style="flex:1;overflow:auto;border:1px solid #eee;padding:8px;"><div style="font-weight:600;margin-bottom:6px;">远端（-）</div>';
+  for (let i = 0; i < max; i++) {
+    const rl = rLines[i] ?? '';
+    const ll = lLines[i] ?? '';
+    if (rl === ll) {
+      html += `<div style="padding:2px 4px;"> ${escapeHtml(rl)}</div>`;
+    } else {
+      html += `<div style="padding:2px 4px;background:#ffecec;color:#a33;">- ${escapeHtml(rl)}</div>`;
+    }
+  }
+  html += '</div>';
+  html += '<div style="flex:1;overflow:auto;border:1px solid #eee;padding:8px;"><div style="font-weight:600;margin-bottom:6px;">本地（+）</div>';
+  for (let i = 0; i < max; i++) {
+    const rl = rLines[i] ?? '';
+    const ll = lLines[i] ?? '';
+    if (rl === ll) {
+      html += `<div style="padding:2px 4px;"> ${escapeHtml(ll)}</div>`;
+    } else {
+      html += `<div style="padding:2px 4px;background:#ecfff0;color:#0a7a3c;">+ ${escapeHtml(ll)}</div>`;
+    }
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showDiffDialog(remote, local) {
+  return new Promise((resolve) => {
+    const html = computeSideBySideDiffHTML(remote, local);
+    const inst = dialog.info({
+      title: '远端与本地草稿差异',
+      content: () => h('div', { innerHTML: html, style: 'max-height:60vh; overflow:auto;' }),
+      positiveText: '使用远端覆盖本地',
+      negativeText: '不读取，使用本地',
+      // 允许点击遮罩关闭，隐藏右上叉按钮，点击遮罩时调用 onClose
+      maskClosable: false,
+      closable: true,
+      onPositiveClick: () => { resolve('remote'); inst.destroy(); },
+      onNegativeClick: () => { resolve('local'); inst.destroy(); },
+      // 关闭（例如点击遮罩）时返回 null 并销毁实例
+      onClose: () => { resolve(null); inst.destroy(); }
+    });
+  });
+}
+// 修改 load：使用模态框展示差异
+async function load() {
+  error.value = "";
+  success.value = "";
+  if (!validKey.value) {
+    error.value = "Key 无效";
+    return;
+  }
+  loading.value = true;
+  const k = key.value.trim();
+  try {
+    const res = await getPaste(k);
+    const remote = (res && typeof res.data === "string") ? res.data : (res && res.data) || '';
+    const local = getLocalDraft(k);
+    // 若存在本地草稿且与远程不同且本地草稿非空（因为我们不保存空草稿），则展示差异对话框
+    if (local !== null && local !== remote) {
+      const choice = await showDiffDialog(remote, local);
+      if (choice === 'remote') {
+        content.value = remote;
+        saveLocalDraft(k, remote);
+      } else if (choice === 'local') {
+        content.value = local;
+      } else {
+        // 取消：保持当前编辑区（不覆盖），若当前编辑区为空则填入本地草稿优先
+        if (!content.value) content.value = local || remote;
+        
+      }
+    } else {
+      content.value = remote;
+      saveLocalDraft(k, remote);
+    }
+    success.value = "读取成功";
+  } catch (e) {
+    console.error(e);
+    error.value = "读取失败：" + (e && e.message ? e.message : String(e));
+  } finally {
+    loading.value = false;
+    setTimeout(() => (success.value = ""), 2500);
+  }
+}
+
+// 修改 save 中已在之前实现时会调用 saveLocalDraft(K, txt)；无须额外改动
+
+// 在 script 内部靠近其它 reactive 变量的声明处新增自动保存定时器引用与启动/停止函数
+const autoSaveTimer = { id: null }; // 使用对象以避免在模板作用域报未使用变量
+
+function startAutoSave(intervalMs = 3000) {
+  stopAutoSave();
+  autoSaveTimer.id = setInterval(() => {
+    try {
+      const k = (key.value || '').trim();
+      // 只在有合法 key 并且用户确实编辑了内容时自动保存草稿
+      if (!k || !validKey.value) return;
+      if (!content.value) return;
+      // 使用已有的 saveLocalDraft，避免保存空白内容（saveLocalDraft 已处理空白）
+      saveLocalDraft(k, content.value || '');
+      // 不重置 edited/lastLoadedContent，这里只是保存草稿
+    } catch (e) {
+      console.warn('autoSave error', e);
+    }
+  }, intervalMs);
+}
+
+function stopAutoSave() {
+  if (autoSaveTimer.id !== null) {
+    clearInterval(autoSaveTimer.id);
+    autoSaveTimer.id = null;
+  }
+}
 </script>
 
 <style scoped>

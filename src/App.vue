@@ -1,7 +1,7 @@
 <script setup>
 import iheader from '@/components/iheader.vue';
 import myfooter from '@/components/myfooter.vue';
-import { darkTheme, lightTheme, NConfigProvider, NGlobalStyle, NSpin } from 'naive-ui';
+import { darkTheme, lightTheme, NConfigProvider, NGlobalStyle, NSpin, NDialogProvider } from 'naive-ui';
 import { computed, onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 const darktheme = ref(true);
@@ -39,6 +39,7 @@ router.afterEach(() => {
 <template>
   <n-config-provider :theme="darktheme ? darkTheme : lightTheme"
     style="display: flex; flex-direction: column;align-items: center;">
+    <n-dialog-provider>
     <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
     <section style="max-width: 800px;min-width: 300px;min-height: 90vh; position: relative;width: 100%;">
       <Suspense>
@@ -48,6 +49,7 @@ router.afterEach(() => {
       </Suspense>
     </section>
     <myfooter v-if="showLayout" />
+    </n-dialog-provider>
     <n-global-style />
   </n-config-provider>
 </template>
