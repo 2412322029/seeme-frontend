@@ -76,6 +76,7 @@ indexer.note
   .get("50877", nodeid.value)
   .then((res) => {
     result.value = res;
+    document.title =result.value?.metadata?.content?.title || "note Not Found";
     if (res === null) {
       error.value = "note Not Found";
     }

@@ -594,7 +594,6 @@ function messageStatusTemp(txt) {
 
 /* 初始化时加载收藏 */
 onMounted(() => {
-  document.title = "Paste - Share Text";
   loadFavorites();
   // 在初始化时，如果 route 提供 id，按原逻辑处理（无需另外强制覆盖）
   const rid = route.params.id;

@@ -2,17 +2,12 @@
 import iheader from '@/components/iheader.vue';
 import myfooter from '@/components/myfooter.vue';
 import { darkTheme, lightTheme, NConfigProvider, NDialogProvider, NGlobalStyle, NModalProvider, NSpin } from 'naive-ui';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 const darktheme = ref(true);
 const loading = ref(false);
 const router = useRouter();
 const route = useRoute();
-const showLayout = computed(() => {
-  // 当路由 meta.hideLayout 为 true 时隐藏 iheader/myfooter
-  return !(route.meta && route.meta.hideLayout);
-});
-
 onMounted(() => {
   const darkthemeValue = localStorage.getItem('darktheme');
   if (darkthemeValue !== null) {
@@ -29,8 +24,8 @@ watch(darktheme, (newValue) => {
 router.beforeEach((to, from, next) => {
   loading.value = true;
   next();
+  document.title = to.meta.title +" - "+ to.meta.description || 'SeeMe';
 });
-
 router.afterEach(() => {
   loading.value = false;
 });
@@ -49,7 +44,7 @@ router.afterEach(() => {
         <RouterView v-else />
       </Suspense>
     </section>
-    <myfooter v-if="showLayout" />
+    <myfooter />
     </n-dialog-provider>
   </n-modal-provider>
     <n-global-style />

@@ -32,17 +32,14 @@
 
 <script setup>
 import { NButton, NTag } from 'naive-ui';
-import { computed, onBeforeMount, onMounted, onUnmounted, ref  } from 'vue';
-import { RouterView, useRoute, useRouter } from 'vue-router';
+import { computed, onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import "vue3-toastify/dist/index.css";
 import { get_deployment_info, gethitokoto } from "./api";
 const devInfo = ref({ 'deploy_time': 'loading', 'git_hash': 'loading', 'access_count': 'loading' });
 const hitokoto = ref(null);
 const showButton = ref(false);
 const route = useRoute();
-const showLayout = computed(() => {
-  return !(route.meta && route.meta.hideLayout);
-});
 
 function getdevInfo() {
   get_deployment_info()
@@ -83,11 +80,8 @@ const buttonStyle = computed(() => {
 });
 
 onBeforeMount(() => {
-  if (!showLayout.value) {
       getdevInfo();
   fetchHitokoto();
-  }
-
 });
 
 onMounted(() => {

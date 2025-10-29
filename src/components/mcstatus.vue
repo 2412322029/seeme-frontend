@@ -22,6 +22,7 @@ import { McInfo, Mclatency } from "./api";
 const route = useRoute(); // 获取当前路由对象
 const router = useRouter(); // 获取路由实例
 const mcserveraddr = ref(route.params.address || "");
+const loading = ref(false);
 const errormsg = reactive({
   mcserveraddr: "",
 });
@@ -49,38 +50,42 @@ function getMcInfo() {
     errormsg.mcserveraddr = mcserveraddr.value + "  错误的地址 <host:port>";
     return;
   }
-  McInfo(mcserveraddr.value)
-    .then((data) => {
-      if (typeof data !== "string" && data.error === undefined) {
-        mcdata.value = data;
-        router.push({
-          name: "mcstatus",
-          params: { address: mcserveraddr.value },
+    loading.value = true;
+    console.log(loading.value);
+    McInfo(mcserveraddr.value)
+      .then((data) => {
+        if (typeof data !== "string" && data.error === undefined) {
+          mcdata.value = data;
+          router.push({
+            name: "mcstatus",
+            params: { address: mcserveraddr.value },
+          });
+          updateHistory(mcserveraddr.value);
+        } else {
+          errormsg.mcserveraddr = data;
+        }
+        loading.value = false;
+      })
+      .catch((error) => {
+        console.log("error:", error);
+        toast(error + "<br>" + JSON.stringify(error.response.data), {
+          theme: "auto",
+          type: "error",
         });
-        updateHistory(mcserveraddr.value);
-      } else {
-        errormsg.mcserveraddr = data;
-      }
-    })
-    .catch((error) => {
-      console.log("error:", error);
-      toast(error + "<br>" + JSON.stringify(error.response.data), {
-        theme: "auto",
-        type: "error",
+        loading.value = false;
       });
-    });
-  Mclatency(mcserveraddr.value)
-    .then((data) => {
-      mclay.value = data;
-    })
-    .catch((error) => {
-      console.log("error:", error);
-      toast(error, {
-        theme: "auto",
-        type: "error",
+    Mclatency(mcserveraddr.value)
+      .then((data) => {
+        mclay.value = data;
+      })
+      .catch((error) => {
+        console.log("error:", error);
+        toast(error, {
+          theme: "auto",
+          type: "error",
+        });
       });
-    });
-}
+    }
 const fullpath = ref(window.location.href);
 function updateHistory(address) {
   const index = history.value.indexOf(address);
@@ -158,7 +163,7 @@ onMounted(() => {
       autosize
       style="width: 80%; margin: 5px"
     />
-    <n-button type="primary" style="margin: 5px" @click="getMcInfo"
+    <n-button type="primary" style="margin: 5px" @click="getMcInfo" :loading="loading"
       >查询</n-button
     >
     <div style="margin: 5px">

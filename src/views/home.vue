@@ -1,171 +1,157 @@
 <template>
-<div class="home">
+  <div class="home">
     <div class="home-container">
-        <div class="home-content">
-            <h1>你在干什么？</h1>
-            <p>通过网站，可以让别人知道你在干什么。</p>
-            <p>数据可以包含电脑、浏览器、手机这几个维度。</p>
-            <div class="feature-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>平台</th>
-                            <th>功能</th>
-                            <th>自/手动</th>
-                            <th>触发方式</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>电脑端</td>
-                            <td>最近活动程序、程序标题、图标、更新时间</td>
-                            <td>自动</td>
-                            <td>固定时间间隔（默认10分钟）</td>
-                        </tr>
-                        <tr>
-                            <td>浏览器端</td>
-                            <td>网站信息、网站标题、无参数URL、更新时间</td>
-                            <td>手动</td>
-                            <td>点击上传按钮</td>
-                        </tr>
-                        <tr>
-                            <td>安卓端</td>
-                            <td>前台应用名称、WiFi信息、电池电量、更新时间</td>
-                            <td>自动</td>
-                            <td>切换应用时更新</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="todo-description">
-                <h2>待办事项</h2>
-                <ul>
-                    <li>显示steam在线情况（已完成）</li>
-                    <li>report命令行->gui（已完成部分功能）</li>
-                    <li>应用时间统计（已完成基本功能）</li>
-                    <li>定时上传统计数据库（未完成）</li>
-                    <li>服务端应用时间统计接口（未完成）</li>
-                    <li>前端表格统计（未完成）</li>
-                </ul>
-            </div>
+      <div class="home-content">
+        <p>本项目包含若干页面，简要说明如下：</p>
+        <ul>
+          <li v-for="r in $router
+            .getRoutes()
+            .filter((rt) => rt.path && rt.meta?.show == true)" :key="r.path">
+            <strong><a :href="r.path">{{ r.meta?.title || r.name || r.path }}</a></strong>
+            <span v-if="r.meta?.description">：{{ r.meta.description }}</span>
+            <p v-if="r.meta?.summary" v-html="r.meta.summary"></p>
+          </li>
+        </ul>
+        <div class="todo-description">
+          <h2>待办事项</h2>
+          <ul>
+            <li>显示steam在线情况（已完成）</li>
+            <li>report命令行->gui（已完成部分功能）</li>
+            <li>应用时间统计（已完成基本功能）</li>
+            <li>定时上传统计数据库（未完成）</li>
+            <li>服务端应用时间统计接口（未完成）</li>
+            <li>前端表格统计（未完成）</li>
+          </ul>
         </div>
+      </div>
 
-        <div class="messages-section">
-          <h3>留言列表 <a class="refresh-btn" @click="loadMessages" :disabled="loadingMessages">刷新</a></h3>
-          <div v-if="loadingMessages" class="messages-loading">加载中...</div>
-          <div v-else>
-            <div v-if="messages.length === 0" class="no-messages">暂无留言</div>
-            <ul class="messages-list">
-              <li v-for="(m, idx) in sortedMessages" :key="idx" class="message-item">
-                <div class="meta">
-                  <div class="meta-left" style="display: flex; align-items: center; gap: 8px;">
-                    <div class="avatar-wrap">
-                      <a
-                        v-if="m.email"
-                        :href="'mailto:' + m.email"
-                        class="avatar-link"
-                        @click.stop
-                        :title="m.email"
-                      >
-                        <img
-                          :src="`https://cravatar.cn/avatar/${md5((m.email||'').trim().toLowerCase())}?s=80&d=identicon`"
-                          alt="avatar"
-                          class="avatar"
-                        />
-                      </a>
+      <div class="messages-section">
+        <h3>
+          留言列表
+          <a class="refresh-btn" @click="loadMessages" :disabled="loadingMessages">刷新</a>
+        </h3>
+        <div v-if="loadingMessages" class="messages-loading">加载中...</div>
+        <div v-else>
+          <div v-if="messages.length === 0" class="no-messages">暂无留言</div>
+          <ul class="messages-list">
+            <li v-for="(m, idx) in sortedMessages" :key="idx" class="message-item">
+              <div class="meta">
+                <div class="meta-left" style="display: flex; align-items: center; gap: 8px">
+                  <div class="avatar-wrap">
+                    <a v-if="m.email" :href="'mailto:' + m.email" class="avatar-link" @click.stop :title="m.email">
+                      <img :src="`https://cravatar.cn/avatar/${md5(
+                        (m.email || '').trim().toLowerCase()
+                      )}?s=80&d=identicon`" alt="avatar" class="avatar" />
+                    </a>
 
-                      <div v-else class="avatar-nolink" :title="m.name || '匿名'">
-                        <div class="avatar-letter">
-                          {{ (m.name || '匿名').trim().charAt(0).toUpperCase() }}
-                        </div>
+                    <div v-else class="avatar-nolink" :title="m.name || '匿名'">
+                      <div class="avatar-letter">
+                        {{ (m.name || "匿名").trim().charAt(0).toUpperCase() }}
                       </div>
                     </div>
-                    <span class="name">{{ m.name || '匿名' }}</span>
-                    <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location||"未知" }}  </n-tag>
-                    <!-- <a class="email" v-if="m.email" :href="'mailto:' + m.email">📧</a> -->
                   </div>
-                  
-                  <div class="meta-right">
-                    <n-tag :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}  </n-tag>
-                    <span class="time" :title="m.report_time">{{ formatReportTime(m.report_time) }}</span>
-                  </div>
-                    </div>
-                <div class="content"
-                  :style="m._expanded ? {} : { display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }"
-                  
-                  @keydown.enter.prevent="m._expanded = !m._expanded"
-                  tabindex="0"
-                  role="button"
-                  v-html="md.render(m.content)"
-                >
+                  <span class="name">{{ m.name || "匿名" }}</span>
+                  <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location || "未知" }}
+                  </n-tag>
+                  <!-- <a class="email" v-if="m.email" :href="'mailto:' + m.email">📧</a> -->
                 </div>
-                  <a  style="cursor:pointer;float: right;" 
-                  v-if="(m.content || '').length > 120 || (m.content || '').split('\n').length > 2" 
-                  @click.stop="m._expanded = !m._expanded">
-                    {{ m._expanded ? '收起' : '展开全文' }}
-                  </a>
-                
-              </li>
-            </ul>
+
+                <div class="meta-right">
+                  <n-tag :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}
+                  </n-tag>
+                  <span class="time" :title="m.report_time">{{
+                    formatReportTime(m.report_time)
+                  }}</span>
+                </div>
+              </div>
+              <div class="content" :style="m._expanded
+                  ? {}
+                  : {
+                    display: '-webkit-box',
+                    WebkitLineClamp: '2',
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }
+                " @keydown.enter.prevent="m._expanded = !m._expanded" tabindex="0" role="button"
+                v-html="md.render(m.content)"></div>
+              <a style="cursor: pointer; float: right" v-if="
+                (m.content || '').length > 120 ||
+                (m.content || '').split('\n').length > 2
+              " @click.stop="m._expanded = !m._expanded">
+                {{ m._expanded ? "收起" : "展开全文" }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="recaptcha-section">
+        <h3>验证 & 留言</h3>
+        <div id="recaptcha-container" class="code-block"></div>
+        <span id="recaptcha-status">{{ statusText }}</span> /
+        <span class="status">{{ messageStatus }}</span>
+        <div class="message-form">
+          <div class="form-top-row" style="
+              display: flex;
+              gap: 10px;
+              align-items: center;
+              flex-wrap: wrap;
+            ">
+            <n-input v-model="msgName" id="msgName" placeholder="称呼，可选，最长100字符" style="flex: 1" />
+            <n-input v-model="msgEmail" id="msgEmail" placeholder="邮箱，可选" style="flex: 1" />
+          </div>
+          <div class="md-editor" style="
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              align-items: flex-start;
+            ">
+            <div style="width: 100%">
+              <n-input type="textarea" v-model:value="msgContent" id="msgContent" placeholder="留言内容markdown（必填，最长400字符）"
+                rows="6"></n-input>
+            </div>
+            <div style="width: 100%">
+              <div class="code-block md-preview" v-show="previewVisible" v-html="mdmsgContent"></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <div>
+              <n-button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? "隐藏预览" : "显示预览"
+                }}</n-button>
+              <n-button type="button" @click="resetRecaptcha">重置验证</n-button>
+            </div>
+            <n-button type="primary" :disabled="submitting" @click="submitMessage" style="float: left">提交留言</n-button>
           </div>
         </div>
-
-        <div class="recaptcha-section">
-            <h3>验证 & 留言</h3>
-            <div id="recaptcha-container" class="code-block"></div>               
-            <span id="recaptcha-status">{{ statusText }}</span>  /  <span class="status">{{ messageStatus }}</span>
-            <div class="message-form">
-              <div class="form-top-row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                <n-input v-model="msgName" id="msgName" placeholder="称呼，可选，最长100字符"  style="flex: 1;"/>
-                <n-input v-model="msgEmail" id="msgEmail" placeholder="邮箱，可选"  style="flex: 1;"/>
-
-              </div>
-                <div class="md-editor" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;">
-                 <div style="width:100%;">
-                   <n-input type="textarea" v-model:value="msgContent" id="msgContent" placeholder="留言内容markdown（必填，最长400字符）" rows="6"></n-input>
-                 </div>
-                 <div style="width: 100%;">
-                  <div class="code-block md-preview" v-show="previewVisible" v-html="mdmsgContent"></div>
-                 </div>
-                 </div>
- 
-              <div class="actions">
-                <div>
-                  <n-button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? '隐藏预览' : '显示预览' }}</n-button>
-                  <n-button type="button" @click="resetRecaptcha">重置验证</n-button>
-                </div>
-                <n-button type="primary" :disabled="submitting" @click="submitMessage" style="float: left;">提交留言</n-button>
-              </div>
-             </div>
-
-
-        </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script setup>
-import md5 from 'js-md5';
+import md5 from "js-md5";
 import markdownit from "markdown-it";
-import {
-  NButton,
-  NInput,
-  NTag
-} from "naive-ui";
-import { UAParser } from 'ua-parser-js';
-import { computed, onMounted, ref, watch } from 'vue';
+import { NButton, NInput, NTag } from "naive-ui";
+import { UAParser } from "ua-parser-js";
+import { computed, onMounted, ref, watch } from "vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-import { getMessages, leaveMessage } from '../components/api';
-const SITE_KEY = '6Le64PcrAAAAABE0_5Q2MC9WMNULUJcSPnnxQ_NQ'; 
+import { getMessages, leaveMessage } from "../components/api";
+const SITE_KEY = "6Le64PcrAAAAABE0_5Q2MC9WMNULUJcSPnnxQ_NQ";
 
 const verified = ref(false);
-const statusText = ref('未验证');
-console.log(UAParser("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"));
-function uaInfo(ua){
-  const { browser, cpu, os } = UAParser(ua || '');
-  return `${browser.name || ''} ${browser.major|| ''} /
-   ${os.name || '未知设备'}${os.version ? ' ' + os.version : ''} /${cpu.architecture || ''}`.trim();
+const statusText = ref("未验证");
+console.log(
+  UAParser(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+  )
+);
+function uaInfo(ua) {
+  const { browser, cpu, os } = UAParser(ua || "");
+  return `${browser.name || ""} ${browser.major || ""} /
+   ${os.name || "未知设备"}${os.version ? " " + os.version : ""} /${cpu.architecture || ""
+    }`.trim();
 }
 
 let widget = null;
@@ -175,31 +161,39 @@ const md = markdownit({
   linkify: true,
   breaks: true,
   typographer: true,
-})
+});
 function loadRecaptchaScriptWithOnload(timeout = 8000) {
   const tryLoad = (src, useOnloadCallback) => {
     return new Promise((resolve, reject) => {
       // 如果已经存在并且 grecaptcha 可用，直接 resolve
-      if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+      if (window.grecaptcha && typeof window.grecaptcha.render === "function") {
         resolve();
         return;
       }
       // 避免重复插入相同脚本
-      const existing = document.querySelector(`script[src^="${src.split('?')[0]}"]`);
+      const existing = document.querySelector(
+        `script[src^="${src.split("?")[0]}"]`
+      );
       if (existing) {
         // 如果已有脚本，等待 grecaptcha 就绪或超时
         let t = setTimeout(() => {
-          reject(new Error('recaptcha 加载超时（已有脚本但未就绪）'));
+          reject(new Error("recaptcha 加载超时（已有脚本但未就绪）"));
         }, timeout);
         const checker = () => {
-          if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+          if (
+            window.grecaptcha &&
+            typeof window.grecaptcha.render === "function"
+          ) {
             clearTimeout(t);
             resolve();
           }
         };
         // 定期检查
         const iv = setInterval(() => {
-          if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+          if (
+            window.grecaptcha &&
+            typeof window.grecaptcha.render === "function"
+          ) {
             clearInterval(iv);
             clearTimeout(t);
             resolve();
@@ -215,21 +209,26 @@ function loadRecaptchaScriptWithOnload(timeout = 8000) {
           clearTimeout(timer);
           // 确保 grecaptcha 可用
           setTimeout(() => {
-            if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+            if (
+              window.grecaptcha &&
+              typeof window.grecaptcha.render === "function"
+            ) {
               resolve();
             } else {
               // 小延迟后仍不可用则失败
-              reject(new Error('grecaptcha 未就绪'));
+              reject(new Error("grecaptcha 未就绪"));
             }
           }, 0);
         };
         timer = setTimeout(() => {
-          try { delete window.__recaptchaOnLoad; } catch(_) {}
-          reject(new Error('recaptcha 加载超时'));
+          try {
+            delete window.__recaptchaOnLoad;
+          } catch (_) { }
+          reject(new Error("recaptcha 加载超时"));
         }, timeout);
       }
 
-      const s = document.createElement('script');
+      const s = document.createElement("script");
       s.src = src;
       s.async = true;
       s.defer = true;
@@ -237,86 +236,94 @@ function loadRecaptchaScriptWithOnload(timeout = 8000) {
         s.onload = () => {
           // 等短暂时间再尝试确认 grecaptcha 是否就绪
           setTimeout(() => {
-            if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+            if (
+              window.grecaptcha &&
+              typeof window.grecaptcha.render === "function"
+            ) {
               resolve();
             } else {
               // 仍不可用也当作失败，让上层回退
-              reject(new Error('脚本加载完成，但 grecaptcha 未就绪'));
+              reject(new Error("脚本加载完成，但 grecaptcha 未就绪"));
             }
           }, 50);
         };
-        s.onerror = () => reject(new Error('脚本加载错误'));
+        s.onerror = () => reject(new Error("脚本加载错误"));
       }
       document.head.appendChild(s);
     });
   };
 
   // 先尝试 recaptcha.net（有些地域推荐使用），带 onload 回调确保就绪
-  const recaptchaNet = 'https://recaptcha.net/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit';
-  const googleCom = 'https://www.google.com/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit';
+  const recaptchaNet =
+    "https://recaptcha.net/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit";
+  const googleCom =
+    "https://www.google.com/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit";
 
   return tryLoad(recaptchaNet, true)
     .catch((e1) => {
-      console.warn('recaptcha.net 加载失败，尝试 google.com：', e1);
+      console.warn("recaptcha.net 加载失败，尝试 google.com：", e1);
       return tryLoad(googleCom, true);
     })
     .catch((e2) => {
-      console.warn('google.com 加载失败或 grecaptcha 未就绪：', e2);
+      console.warn("google.com 加载失败或 grecaptcha 未就绪：", e2);
       // 最后尝试不带 onload 的 google 脚本（某些环境下 onload 参数可能被阻断）
-      const googlePlain = 'https://www.google.com/recaptcha/api.js';
-      return tryLoad(googlePlain, false)
-        .catch((e3) => {
-          console.error('所有 recaptcha 加载方式均失败', e3);
-          throw e3;
-        });
+      const googlePlain = "https://www.google.com/recaptcha/api.js";
+      return tryLoad(googlePlain, false).catch((e3) => {
+        console.error("所有 recaptcha 加载方式均失败", e3);
+        throw e3;
+      });
     })
     .finally(() => {
-      try { delete window.__recaptchaOnLoad; } catch(_) {}
+      try {
+        delete window.__recaptchaOnLoad;
+      } catch (_) { }
     });
 }
 
-function renderWidget(){
+function renderWidget() {
   try {
-    if(!window.grecaptcha || typeof window.grecaptcha.render !== 'function') {
-      console.error('grecaptcha 未加载或 render 不可用');
+    if (!window.grecaptcha || typeof window.grecaptcha.render !== "function") {
+      console.error("grecaptcha 未加载或 render 不可用");
       return;
     }
-    if(widget !== null) return;
-    widget = grecaptcha.render('recaptcha-container', {
+    if (widget !== null) return;
+    widget = grecaptcha.render("recaptcha-container", {
       sitekey: SITE_KEY,
-      callback: function(tkn){
+      callback: function (tkn) {
         token = tkn;
         verified.value = true;
-        statusText.value = '已验证';
+        statusText.value = "已验证";
       },
-      'expired-callback': function(){
+      "expired-callback": function () {
         token = null;
         verified.value = false;
-        statusText.value = '验证过期，请重新验证';
-      }
+        statusText.value = "验证过期，请重新验证";
+      },
     });
   } catch (e) {
-    console.error('renderWidget 错误', e);
+    console.error("renderWidget 错误", e);
   }
 }
 
-async function initRecaptcha(){
+async function initRecaptcha() {
   try {
-    statusText.value = '正在加载 reCAPTCHA...';
+    statusText.value = "正在加载 reCAPTCHA...";
     await loadRecaptchaScriptWithOnload(8000);
     // 确认 grecaptcha 存在后再渲染
-    if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+    if (window.grecaptcha && typeof window.grecaptcha.render === "function") {
       renderWidget();
-      statusText.value = 'reCAPTCHA 已就绪';
+      statusText.value = "reCAPTCHA 已就绪";
     } else {
-      statusText.value = 'reCAPTCHA 未就绪';
-      console.error('grecaptcha 已加载但 render 不可用');
+      statusText.value = "reCAPTCHA 未就绪";
+      console.error("grecaptcha 已加载但 render 不可用");
     }
   } catch (e) {
-    console.error('加载 recaptcha 失败：', e);
-    statusText.value = 'reCAPTCHA 加载失败';
+    console.error("加载 recaptcha 失败：", e);
+    statusText.value = "reCAPTCHA 加载失败";
   } finally {
-    try { delete window.__recaptchaOnLoad; } catch(_) {}
+    try {
+      delete window.__recaptchaOnLoad;
+    } catch (_) { }
   }
 }
 
@@ -326,103 +333,116 @@ onMounted(() => {
 });
 
 /* resetRecaptcha：重置 reCAPTCHA */
-function resetRecaptcha(){
+function resetRecaptcha() {
   try {
-    if(window.grecaptcha && widget !== null){
+    if (window.grecaptcha && widget !== null) {
       grecaptcha.reset(widget);
     }
-  } catch(e){
-    console.error('resetRecaptcha 错误', e);
+  } catch (e) {
+    console.error("resetRecaptcha 错误", e);
   }
   token = null;
   verified.value = false;
-  statusText.value = '未验证';
+  statusText.value = "未验证";
 }
 
 /* submitMessage：调用 api.leaveMessage */
 // 从 localStorage 读取，浏览器记住 name / email
-const msgName = ref(localStorage.getItem('guest_name') || '');
-const msgEmail = ref(localStorage.getItem('guest_email') || '');
-const msgContent = ref('');
+const msgName = ref(localStorage.getItem("guest_name") || "");
+const msgEmail = ref(localStorage.getItem("guest_email") || "");
+const msgContent = ref("");
 const submitting = ref(false);
-const messageStatus = ref('');
+const messageStatus = ref("");
 
 const mdmsgContent = computed(() => {
-  const v = msgContent.value || '';
-  if (!v || !v.trim()) return '';
+  const v = msgContent.value || "";
+  if (!v || !v.trim()) return "";
   return md.render(v);
 });
 
 watch(msgName, (v) => {
-  try { localStorage.setItem('guest_name', v || ''); } catch (_){}
+  try {
+    localStorage.setItem("guest_name", v || "");
+  } catch (_) { }
 });
 watch(msgEmail, (v) => {
-  try { localStorage.setItem('guest_email', v || ''); } catch (_){}
+  try {
+    localStorage.setItem("guest_email", v || "");
+  } catch (_) { }
 });
 
-function simpleEmailCheck(e){
+function simpleEmailCheck(e) {
   return /^[^@]+@[^@]+\.[^@]+$/.test(e);
 }
 
-async function submitMessage(){
-  if(submitting.value) return;
+async function submitMessage() {
+  if (submitting.value) return;
   // 基本校验
-  const name = (msgName.value || '匿名').trim();
-  const email = (msgEmail.value || '').trim();
-  const content = (msgContent.value || '').trim();
+  const name = (msgName.value || "匿名").trim();
+  const email = (msgEmail.value || "").trim();
+  const content = (msgContent.value || "").trim();
 
-  if(!content){
-    messageStatus.value = '留言内容为必填项';
+  if (!content) {
+    messageStatus.value = "留言内容为必填项";
     return;
   }
-  if(content.length > 400){
-    messageStatus.value = '留言过长（最大400字符）';
+  if (content.length > 400) {
+    messageStatus.value = "留言过长（最大400字符）";
     return;
   }
-  if(name.length > 100){
-    messageStatus.value = '称呼过长（最大100字符）';
+  if (name.length > 100) {
+    messageStatus.value = "称呼过长（最大100字符）";
     return;
   }
-  if(email && email.length > 200){
-    messageStatus.value = '邮箱过长（最大200字符）';
+  if (email && email.length > 200) {
+    messageStatus.value = "邮箱过长（最大200字符）";
     return;
   }
-  if(email && !simpleEmailCheck(email)){
-    messageStatus.value = '邮箱格式不正确';
+  if (email && !simpleEmailCheck(email)) {
+    messageStatus.value = "邮箱格式不正确";
     return;
   }
-  if(!token){
-    messageStatus.value = '请先完成 reCAPTCHA 验证';
+  if (!token) {
+    messageStatus.value = "请先完成 reCAPTCHA 验证";
     return;
   }
 
   submitting.value = true;
-  messageStatus.value = '提交中...';
+  messageStatus.value = "提交中...";
 
   try {
     const json = await leaveMessage({
-      name, email, content, recaptcha_token: token
+      name,
+      email,
+      content,
+      recaptcha_token: token,
     });
-    
 
-    if(json && (json.status === 'ok' || json.entry)){
-      messageStatus.value = '留言提交成功';
+    if (json && (json.status === "ok" || json.entry)) {
+      messageStatus.value = "留言提交成功";
       loadMessages();
       // 保留 name/email（已保存到 localStorage），只清空留言内容
-      msgContent.value = '';
-      try { localStorage.setItem('guest_name', name); localStorage.setItem('guest_email', email); } catch(_){}
-      if(window.grecaptcha && widget !== null){
-        try { grecaptcha.reset(widget); } catch(e){}
+      msgContent.value = "";
+      try {
+        localStorage.setItem("guest_name", name);
+        localStorage.setItem("guest_email", email);
+      } catch (_) { }
+      if (window.grecaptcha && widget !== null) {
+        try {
+          grecaptcha.reset(widget);
+        } catch (e) { }
         token = null;
         verified.value = false;
       }
     } else {
-      messageStatus.value = (json && json.error) ? `提交失败：${JSON.stringify(json)}` : '提交失败';
-      if(json && json.detail) messageStatus.value += '（' + JSON.stringify(json.detail) + '）';
+      messageStatus.value =
+        json && json.error ? `提交失败：${JSON.stringify(json)}` : "提交失败";
+      if (json && json.detail)
+        messageStatus.value += "（" + JSON.stringify(json.detail) + "）";
     }
   } catch (e) {
     console.error(e);
-    messageStatus.value = '提交请求出错';
+    messageStatus.value = "提交请求出错";
   } finally {
     submitting.value = false;
   }
@@ -443,7 +463,7 @@ async function loadMessages() {
           theme: "auto",
           type: "error",
         });
-      } catch (_) {}
+      } catch (_) { }
     }
     // 后端可能返回 { "message": [...] } 或直接数组，兼容两种形式
     if (data && Array.isArray(data.message)) {
@@ -456,7 +476,7 @@ async function loadMessages() {
       messages.value = [];
     }
   } catch (e) {
-    console.error('加载留言失败', e);
+    console.error("加载留言失败", e);
     messages.value = [];
   } finally {
     loadingMessages.value = false;
@@ -473,8 +493,8 @@ const sortedMessages = computed(() => {
   });
 });
 
-function formatReportTime(ts){
-  if (!ts) return '';
+function formatReportTime(ts) {
+  if (!ts) return "";
   const t = Number(ts);
   const ms = t < 1e12 ? t * 1000 : t;
   const d = new Date(ms);
@@ -487,76 +507,78 @@ const previewVisible = ref(true);
 
 <style scoped>
 .home {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
-.content img{
-    max-width: 50% !important;
-    height: auto;
+
+.content img {
+  max-width: 50% !important;
+  height: auto;
 }
+
 .home-container {
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
+  font-size: 2em;
+  margin-bottom: 10px;
 }
 
 h2 {
-    font-size: 1.5em;
-    margin-top: 30px;
-    margin-bottom: 10px;
+  font-size: 1.5em;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 h3 {
-    font-size: 1.2em;
-    margin-top: 20px;
-    margin-bottom: 10px;
+  font-size: 1.2em;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 p {
-    line-height: 1.6;
+  line-height: 1.6;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
 }
 
-th, td {
-    padding: 8px;
-    text-align: left;
-}
-
-.feature-table {
-    overflow-x: auto;
+th,
+td {
+  padding: 8px;
+  text-align: left;
 }
 
 .code-block {
-    padding: 10px;
-    padding-left: 0px;
-    border-radius: 4px;
-    font-family: monospace;
+  padding: 10px;
+  padding-left: 0px;
+  border-radius: 4px;
+  font-family: monospace;
 }
 
 ul {
-    list-style-type: disc;
-    padding-left: 20px;
+  list-style-type: disc;
+  padding-left: 20px;
 }
+
 .recaptcha-section {
   margin-top: 20px;
 }
+
 .message-form {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 10px;
 }
+
 .message-form input,
 .message-form textarea {
   padding: 8px;
@@ -566,32 +588,38 @@ ul {
   width: 100%;
   box-sizing: border-box;
 }
+
 .message-form textarea {
   min-height: 100px;
   resize: vertical;
 }
+
 .actions {
   display: flex;
   justify-content: space-between;
   gap: 8px;
 }
+
 .actions button {
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
 }
+
 .status {
   font-size: 14px;
   margin-top: 6px;
 }
 
-.avatar-wrap img{
+.avatar-wrap img {
   border-radius: 50%;
   width: 40px;
 }
+
 .avatar-wrap a:hover {
   background-color: transparent;
 }
+
 .avatar-letter {
   width: 40px;
   height: 40px;
@@ -605,26 +633,32 @@ ul {
   font-size: 20px;
   font-weight: bold;
 }
+
 .messages-section {
   margin-top: 20px;
   border-radius: 8px;
 }
+
 .messages-section h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0 0 8px 0;
 }
+
 .refresh-btn {
   margin-left: 12px;
   padding: 4px 8px;
   font-size: 12px;
   cursor: pointer;
 }
-.messages-loading, .no-messages {
+
+.messages-loading,
+.no-messages {
   color: #666;
   padding: 8px 0;
 }
+
 .messages-list {
   list-style: none;
   padding: 0;
@@ -633,12 +667,14 @@ ul {
   flex-direction: column;
   gap: 10px;
 }
+
 .message-item {
   border-top: 1px solid rgba(121, 121, 121, 0.961);
   padding: 10px;
   padding-left: 0px;
   padding-right: 0px;
 }
+
 .message-item .meta {
   display: flex;
   justify-content: space-between;
@@ -646,31 +682,37 @@ ul {
   margin-bottom: 6px;
   font-size: 13px;
 }
+
 .message-item .name {
   font-weight: 600;
   color: #2a9464;
 }
+
 .message-item .ip {
   font-size: 12px;
   color: #858585;
 }
+
 .message-item .ua {
   font-size: 12px;
   margin-right: 10px;
   color: #858585;
 }
+
 .message-item .time {
   font-size: 12px;
   color: #858585;
 }
+
 .message-item .content {
   margin-left: 10px;
   white-space: pre-wrap;
   word-break: break-word;
 }
+
 .message-item .email {
   /* margin-top: 6px; */
-  font-size: 16px; 
+  font-size: 16px;
   padding: 0px;
   margin: 0px;
 }
@@ -680,20 +722,22 @@ ul {
   padding: 6px 10px;
   font-size: 13px;
   border-radius: 6px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background: #fafafa;
   cursor: pointer;
 }
+
 @media (prefers-color-scheme: dark) {
   .form-top-row .mini-btn {
     background: #111214;
-    border-color: rgba(255,255,255,0.06);
+    border-color: rgba(255, 255, 255, 0.06);
     color: #ddd;
   }
 }
+
 /* 微调预览框样式 */
 .md-preview {
-  border: 1px solid rgba(39,39,42,0.06);
+  border: 1px solid rgba(39, 39, 42, 0.06);
   padding: 8px;
   border-radius: 6px;
   background: transparent;
@@ -707,6 +751,7 @@ ul {
     flex-direction: column;
     align-items: stretch;
   }
+
   #recaptcha-status-inline {
     margin-left: 0;
     margin-top: 6px;
@@ -719,13 +764,14 @@ ul {
     font-size: 16px;
     gap: 8px;
   }
+
   .refresh-btn {
     display: inline-block;
     padding: 8px 12px;
     font-size: 14px;
     border-radius: 6px;
     background: transparent;
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     cursor: pointer;
   }
 
@@ -735,7 +781,7 @@ ul {
 
   .message-item {
     border-top: none;
-    border-bottom: 1px solid rgba(121,121,121,0.08);
+    border-bottom: 1px solid rgba(121, 121, 121, 0.08);
     display: flex;
     flex-direction: column;
     /* gap: 8px; */
@@ -752,9 +798,11 @@ ul {
     align-items: center;
     gap: 8px;
   }
+
   .meta-right {
     width: 100%;
   }
+
   .avatar-wrap img,
   .avatar-letter {
     width: 36px;
@@ -768,15 +816,18 @@ ul {
     margin-top: 4px;
     font-size: 14px;
   }
+
   .message-item .name {
     text-wrap: nowrap;
   }
+
   .message-item .ua,
   .message-item .ip,
   .message-item .time {
     font-size: 12px;
     text-wrap: nowrap;
   }
+
   .message-item .time {
     float: inline-end;
   }
@@ -787,6 +838,7 @@ ul {
     align-items: stretch;
     gap: 8px;
   }
+
   .form-top-row n-input {
     width: 100% !important;
   }
@@ -801,6 +853,7 @@ ul {
     align-items: stretch;
     gap: 8px;
   }
+
   .actions n-button[type="primary"] {
     width: 100%;
   }

@@ -3,8 +3,7 @@ import {
     NButton,
     NCard,
     NCollapse,
-    NCollapseItem,
-    NSkeleton
+    NCollapseItem
 } from "naive-ui";
 import { onBeforeMount, ref } from 'vue';
 import { toast } from "vue3-toastify";
@@ -123,9 +122,10 @@ function getPersonaStateflagsHTML(n) {
 </script>
 
 <template>
-    <n-card v-if="steamData['steam_enable']" title="Steam Status" style="min-width: 200px;">
+    <n-card title="Steam Status" style="min-width: 200px;">
         <n-button @click="getsteaminfo" text style="margin:10px 0;float:right;font-size: 20px;" title="刷新">↻</n-button>
-        <div v-if="steamData['status_code'] == 200" v-for="(item, index) in steamData.data.response.players"
+        <div v-if="steamData['status_code'] == 200 && steamData['steam_enable']" 
+        v-for="(item, index) in steamData.data.response.players"
             style="margin: 5px;" :key="index">
             <div style="display: flex;">
                 <img :src="item.avatarfull" alt="头像" style="width: 70px; height: 70px;">
@@ -142,7 +142,7 @@ function getPersonaStateflagsHTML(n) {
             </div>
         </div>
         <div v-else>
-            <div v-html='steamData["text"] || "未知错误"'></div>
+            <div v-html='steamData["text"] || "loading"'></div>
         </div>
         <n-collapse :default-expanded-names="['1' ]">
             <n-collapse-item title="好友" name="1">
@@ -168,10 +168,10 @@ function getPersonaStateflagsHTML(n) {
                     </div>
                 </div>
                 <div v-else>
-                    <div v-html='steamData["text"] || "未知错误"'></div>
+                    <div v-html='steamData["text"] || "loading"'></div>
                 </div>
             </n-collapse-item>
         </n-collapse>
     </n-card>
-    <n-skeleton v-else text :repeat="5" />
+    <!-- <n-skeleton v-else text :repeat="5" /> -->
 </template>

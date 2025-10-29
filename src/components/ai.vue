@@ -1,11 +1,10 @@
 <template>
-    <div id="ai-container" style="max-width: 800px;border: 1px solid #5c5c5c;
-    border-radius: 20px;padding: 10px;margin: 5px;">
+    <div id="ai-container" style="max-width: 800px;">
         <p style="margin: 5px;color: #18a058; display: flex;align-items: center;">
             <i id="ai-icon"></i>
-            AI 摘要
+            AI 摘要 {{ messageText.split('<br>')[0] }}
         </p>
-        <div v-html="messageText"></div>
+        <div v-html="messageText.split('<br>')[1]"></div>
     </div>
 </template>
 
