@@ -1,6 +1,6 @@
 import axios from "axios";
 const isDevelopment = process.env.NODE_ENV === 'development';
-export const baseURL = isDevelopment ? 'http://localhost:5173/api' : location.origin;
+export const baseURL = isDevelopment ? 'http://localhost:5173/api' : location.origin+"/api";
 const axiosInstance = axios.create({
     baseURL
 });
