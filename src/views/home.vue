@@ -26,61 +26,76 @@
       </div>
 
       <div class="messages-section">
-        <h3>
-          留言列表
-          <a class="refresh-btn" @click="loadMessages" :disabled="loadingMessages">刷新</a>
+        <h3 style="display: flex; align-items: center; justify-content: space-between;">
+          <span>留言列表</span>
+          <div style="display: flex; gap: 12px; align-items: center;">
+        <div style="margin-top: 12px; display:flex; align-items:center; justify-content:flex-end; gap:12px;">
+          <n-pagination v-model:page="page" v-model:page-size="limit" :page-count="totalpages"
+            :page-sizes="[5, 10, 20, 30, 40]" size="small" show-size-picker />
+          <n-button v-if="order!='desc'" size="small"  @click="order = 'desc'; page = 1" :bordered="false">
+            最旧
+          </n-button>
+          <n-button v-else size="small"  @click="order = 'asc'; page = 1" :bordered="false">
+            最新
+          </n-button>
+          <div style="font-size:13px;color:#666;">第 {{ page }} / {{ totalpages }} 页</div>
+        </div>
+          </div>
         </h3>
+
         <div v-if="loadingMessages" class="messages-loading">加载中...</div>
-        <div v-else>
+
+        <div v-else class="messages-container">
           <div v-if="messages.length === 0" class="no-messages">暂无留言</div>
+
           <ul class="messages-list">
-            <li v-for="(m, idx) in sortedMessages" :key="idx" class="message-item">
-              <div class="meta">
-                <div class="meta-left" style="display: flex; align-items: center; gap: 8px">
-                  <div class="avatar-wrap">
-                    <a v-if="m.email" :href="'mailto:' + m.email" class="avatar-link" @click.stop :title="m.email">
-                      <img :src="`https://cravatar.cn/avatar/${md5(
-                        (m.email || '').trim().toLowerCase()
-                      )}?s=80&d=identicon`" alt="avatar" class="avatar" />
-                    </a>
+        <li v-for="(m, idx) in sortedMessages" :key="idx" class="message-item">
+          <div class="meta">
+            <div class="meta-left" style="display: flex; align-items: center; gap: 8px">
+          <div class="avatar-wrap">
+            <a v-if="m.email" :href="'mailto:' + m.email" class="avatar-link" @click.stop :title="m.email">
+              <img :src="`https://cravatar.cn/avatar/${md5(
+            (m.email || '').trim().toLowerCase()
+              )}?s=80&d=identicon`" alt="avatar" class="avatar" />
+            </a>
 
-                    <div v-else class="avatar-nolink" :title="m.name || '匿名'">
-                      <div class="avatar-letter">
-                        {{ (m.name || "匿名").trim().charAt(0).toUpperCase() }}
-                      </div>
-                    </div>
-                  </div>
-                  <span class="name">{{ m.name || "匿名" }}</span>
-                  <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location || "未知" }}
-                  </n-tag>
-                  <!-- <a class="email" v-if="m.email" :href="'mailto:' + m.email">📧</a> -->
-                </div>
-
-                <div class="meta-right">
-                  <n-tag :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}
-                  </n-tag>
-                  <span class="time" :title="m.report_time">{{
-                    formatReportTime(m.report_time)
-                  }}</span>
-                </div>
+            <div v-else class="avatar-nolink" :title="m.name || '匿名'">
+              <div class="avatar-letter">
+            {{ (m.name || "匿名").trim().charAt(0).toUpperCase() }}
               </div>
-              <div class="content" :style="m._expanded
-                  ? {}
-                  : {
-                    display: '-webkit-box',
-                    WebkitLineClamp: '2',
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }
-                " @keydown.enter.prevent="m._expanded = !m._expanded" tabindex="0" role="button"
-                v-html="md.render(m.content)"></div>
-              <a style="cursor: pointer; float: right" v-if="
-                (m.content || '').length > 120 ||
-                (m.content || '').split('\n').length > 2
-              " @click.stop="m._expanded = !m._expanded">
-                {{ m._expanded ? "收起" : "展开全文" }}
-              </a>
-            </li>
+            </div>
+          </div>
+          <span class="name">{{ m.name || "匿名" }}</span>
+          <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location || "未知" }}
+          </n-tag>
+            </div>
+
+            <div class="meta-right">
+          <n-tag :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}
+          </n-tag>
+          <span class="time" :title="m.report_time">{{
+            formatReportTime(m.report_time)
+          }}</span>
+            </div>
+          </div>
+
+          <div class="content" :style="m._expanded
+            ? {}
+            : {
+          display: '-webkit-box',
+          WebkitLineClamp: '2',
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+            }
+            " @keydown.enter.prevent="m._expanded = !m._expanded" tabindex="0" role="button"
+            v-html="md.render(m.content)"></div>
+          <a style="cursor: pointer; float: right" v-if="
+            (m.content || '').length > 120 ||
+            (m.content || '').split('\n').length > 2
+          " @click.stop="m._expanded = !m._expanded">
+            {{ m._expanded ? "收起" : "展开全文" }}
+          </a>
+        </li>
           </ul>
         </div>
       </div>
@@ -97,8 +112,8 @@
               align-items: center;
               flex-wrap: wrap;
             ">
-            <n-input v-model="msgName" id="msgName" placeholder="称呼，可选，最长100字符" style="flex: 1" />
-            <n-input v-model="msgEmail" id="msgEmail" placeholder="邮箱，可选" style="flex: 1" />
+            <n-input v-model:value="msgName" id="msgName" placeholder="称呼，可选，最长100字符" style="flex: 1" />
+            <n-input v-model:value="msgEmail" id="msgEmail" placeholder="邮箱，可选" style="flex: 1" />
           </div>
           <div class="md-editor" style="
               display: flex;
@@ -118,7 +133,7 @@
           <div class="actions">
             <div>
               <n-button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? "隐藏预览" : "显示预览"
-                }}</n-button>
+              }}</n-button>
               <n-button type="button" @click="resetRecaptcha">重置验证</n-button>
             </div>
             <n-button type="primary" :disabled="submitting" @click="submitMessage" style="float: left">提交留言</n-button>
@@ -132,7 +147,7 @@
 <script setup>
 import md5 from "js-md5";
 import markdownit from "markdown-it";
-import { NButton, NInput, NTag } from "naive-ui";
+import { NButton, NInput, NPagination, NTag } from "naive-ui";
 import { UAParser } from "ua-parser-js";
 import { computed, onMounted, ref, watch } from "vue";
 import { toast } from "vue3-toastify";
@@ -451,11 +466,17 @@ async function submitMessage() {
 /* 新增：留言列表数据与加载逻辑 */
 const messages = ref([]);
 const loadingMessages = ref(false);
-
+const limit = ref(5);
+const order = ref("desc");
+const page = ref(1);
+const totalpages = ref(1);
+watch([limit, order, page], () => {
+  loadMessages();
+});
 async function loadMessages() {
   loadingMessages.value = true;
   try {
-    const data = await getMessages();
+    const data = await getMessages(limit.value, order.value, page.value);
     if (data && data.error) {
       console.log("getMessages error:", data);
       try {
@@ -465,16 +486,8 @@ async function loadMessages() {
         });
       } catch (_) { }
     }
-    // 后端可能返回 { "message": [...] } 或直接数组，兼容两种形式
-    if (data && Array.isArray(data.message)) {
-      messages.value = data.message.slice();
-    } else if (Array.isArray(data)) {
-      messages.value = data.slice();
-    } else if (data && Array.isArray(data.messages)) {
-      messages.value = data.messages.slice();
-    } else {
-      messages.value = [];
-    }
+    messages.value = data.message.slice();
+    totalpages.value = data.total_pages || 1;
   } catch (e) {
     console.error("加载留言失败", e);
     messages.value = [];
@@ -655,7 +668,9 @@ ul {
 
 .messages-loading,
 .no-messages {
-  color: #666;
+  margin: 30px 0;
+  text-align: center;
+  font-size: 20px;
   padding: 8px 0;
 }
 

@@ -100,6 +100,7 @@ const router = createRouter({
       name: "Paste",
       component: Paste,
       meta: {
+        show: true,
         title: "Paste",
         description: "share your text easily",
         transition: "fade",

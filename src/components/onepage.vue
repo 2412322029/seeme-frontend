@@ -4,24 +4,13 @@
       {{ result?.metadata?.content?.title || "" }}
     </h2>
     <template v-for="i in result?.metadata?.content?.attributes">
-      <a
-        v-if="i?.trait_type == 'xlog_slug'"
-        :href="'https://xlog.not404.cc/' + i?.value"
-        target="_blank"
-        >原文</a
-      >
+      <a v-if="i?.trait_type == 'xlog_slug'" :href="'https://xlog.not404.cc/' + i?.value" target="_blank">原文</a>
     </template>
-    <div
-      v-if="result?.metadata?.content?.content"
-      v-html="md.render(ipfsToCrossbell(result?.metadata?.content?.content) || '')"
-    ></div>
+    <div v-if="result?.metadata?.content?.content" v-html="md.render(ipfsToCrossbell(result?.metadata?.content?.content) || '')
+      "></div>
     <div v-else>
-      <p>{{ result?.metadata?.content?.summary}}</p>
-      <img
-        :src="result?.metadata?.content?.attachments[0]?.address"
-        style="width: 300px"
-        alt=""
-      />
+      <p>{{ result?.metadata?.content?.summary }}</p>
+      <img :src="result?.metadata?.content?.attachments[0]?.address" style="width: 300px" alt="" />
       <div v-for="i in result?.metadata?.content?.external_urls" :key="i">
         <a :href="i" target="_blank">{{ i }}</a>
       </div>
@@ -34,7 +23,12 @@
       updatedAt: {{ formatDate(result?.updatedAt) }}
     </p>
   </div>
-  <p v-else>loading... {{ error }}</p>
+  <div v-if="error != ''">
+    <ERROR msg="" :title="error.toString()" />
+  </div>
+  <div v-if="result == ''&& error==''" style="text-align: center; width: 100%; margin-top: 50px">
+    加载中...
+  </div>
 </template>
 <script setup>
 import { imgSize } from "@mdit/plugin-img-size";
@@ -50,6 +44,7 @@ import mditjs from "markdown-it-highlightjs/core";
 import { ref } from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { formatDate, ipfsToCrossbell } from "./api";
+import ERROR from "./error.vue";
 hljs.registerLanguage("javascript", javascript);
 hljs.registerLanguage("powershell", powershell);
 hljs.registerLanguage("bash", bash);
@@ -76,7 +71,7 @@ indexer.note
   .get("50877", nodeid.value)
   .then((res) => {
     result.value = res;
-    document.title =result.value?.metadata?.content?.title || "note Not Found";
+    document.title = result.value?.metadata?.content?.title || "note Not Found";
     if (res === null) {
       error.value = "note Not Found";
     }
