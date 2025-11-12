@@ -1,8 +1,8 @@
 <template>
 
     <div class="messages-section">
-        <h3 style="display: flex; align-items: center; justify-content: space-between;">
-            <span>留言列表</span>
+        <h3 style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+            <span class="nowrap">留言列表</span>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div style="margin-top: 12px; display:flex; align-items:center; justify-content:flex-end; gap:12px;">
                     <n-pagination v-model:page="page" v-model:page-size="limit" :page-count="totalpages"
@@ -13,7 +13,6 @@
                     <n-button v-else size="small" @click="order = 'asc'; page = 1" :bordered="false">
                         最新
                     </n-button>
-                    <div style="font-size:13px;color:#666;">第 {{ page }} / {{ totalpages }} 页</div>
                 </div>
             </div>
         </h3>
@@ -42,8 +41,8 @@
                                 </div>
                             </div>
                             <span class="name">{{ m.name || "匿名" }}</span>
-                            <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location || "未知" }}
-                            </n-tag>
+                            <!-- <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location || "未知" }}
+                            </n-tag> -->
                         </div>
 
                         <div class="meta-right">
@@ -51,7 +50,7 @@
                             </n-tag>
                             <span class="time" :title="m.report_time">{{
                                 formatReportTime(m.report_time)
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
 
@@ -110,7 +109,7 @@
                 <div>
                     <n-button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? "隐藏预览" :
                         "显示预览"
-                        }}</n-button>
+                    }}</n-button>
                     <n-button type="button" @click="resetRecaptcha">重置验证</n-button>
                 </div>
                 <n-button type="primary" :disabled="submitting" @click="submitMessage"
@@ -489,8 +488,14 @@ const previewVisible = ref(true);
 </script>
 
 <style scoped>
-
-
+.nowrap {
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 200px;
+  min-width: 70px;
+}
 .content img {
     max-width: 50% !important;
     height: auto;
@@ -793,7 +798,7 @@ ul {
         text-wrap: nowrap;
     }
 
-    .message-item .ua,
+    /* .message-item .ua, */
     .message-item .ip,
     .message-item .time {
         font-size: 12px;
@@ -803,6 +808,7 @@ ul {
     .message-item .time {
         float: inline-end;
     }
+
     .form-top-row {
         flex-direction: column;
         align-items: stretch;
@@ -816,6 +822,7 @@ ul {
     .md-preview {
         max-height: 240px;
     }
+
     .actions {
         flex-direction: column-reverse;
         align-items: stretch;

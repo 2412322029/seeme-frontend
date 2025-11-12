@@ -3,15 +3,20 @@
     <div class="home-container">
       <div class="home-content">
         <p>本项目包含若干页面，简要说明如下：</p>
-        <ul>
-          <li v-for="r in $router
-            .getRoutes()
-            .filter((rt) => rt.path && rt.meta?.show == true)" :key="r.path">
-            <strong><a :href="r.path">{{ r.meta?.title || r.name || r.path }}</a></strong>
-            <span v-if="r.meta?.description">：{{ r.meta.description }}</span>
-            <p v-if="r.meta?.summary" v-html="r.meta.summary"></p>
-          </li>
-        </ul>
+        <n-table class="route-table">
+          <tbody>
+            <tr v-for="r in $router.getRoutes().filter(rt => rt.path && rt.meta?.show === true)" :key="r.path">
+              <td>
+                <strong>
+                  <a :href="r.path.replace(/:\w+\??/g, '')" :title="r.meta?.description">
+                    {{ r.meta?.title || r.name || r.path }}
+                  </a>
+                </strong>
+              </td>
+              <td v-html="r.meta?.summary || '—'"></td>
+            </tr>
+          </tbody>
+        </n-table>
         <!-- <div class="todo-description">
           <h2>待办事项</h2>
           <ul>
@@ -31,6 +36,7 @@
 
 <script setup>
 import Message from '@/components/message.vue';
+import { NTable } from 'naive-ui';
 </script>
 
 <style scoped>
@@ -48,7 +54,6 @@ import Message from '@/components/message.vue';
 .home-container {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
 }
 
 h1 {

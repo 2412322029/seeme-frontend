@@ -8,7 +8,6 @@
     </div>
 </template>
 <script setup>
-import { defineProps } from 'vue';
 import { RouterLink } from 'vue-router';
 const props = defineProps({
   title: String,

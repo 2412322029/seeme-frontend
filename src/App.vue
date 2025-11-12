@@ -1,7 +1,7 @@
 <script setup>
 import iheader from '@/components/iheader.vue';
 import myfooter from '@/components/myfooter.vue';
-import { darkTheme, lightTheme, NConfigProvider, NDialogProvider, NGlobalStyle, NModalProvider, NSpin } from 'naive-ui';
+import { darkTheme, lightTheme, NConfigProvider, NDialogProvider, NGlobalStyle, NModalProvider, NSpin, zhCN } from 'naive-ui';
 import { onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 const darktheme = ref(true);
@@ -32,7 +32,7 @@ router.afterEach(() => {
 </script>
 
 <template>
-  <n-config-provider :theme="darktheme ? darkTheme : lightTheme"
+  <n-config-provider :theme="darktheme ? darkTheme : lightTheme" :locale="zhCN"
     style="display: flex; flex-direction: column;align-items: center;">
     <n-modal-provider>
     <n-dialog-provider>
