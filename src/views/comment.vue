@@ -3,5 +3,8 @@ import Message from '@/components/message.vue';
 </script>
 
 <template>
-  <Message />
+  <div style="margin: 20px;">
+      <Message />
+  </div>
+
 </template>

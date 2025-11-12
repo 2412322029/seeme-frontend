@@ -13,7 +13,14 @@ onMounted(() => {
   if (darkthemeValue !== null) {
     darktheme.value = JSON.parse(darkthemeValue);
   } else {
-    darktheme.value = true;
+    // 根据系统偏好设置暗色模式
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    darktheme.value = prefersDark;
+    // 响应系统偏好变化
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const mqListener = (e) => { darktheme.value = e.matches; };
+    if (mq.addEventListener) mq.addEventListener('change', mqListener);
+    else mq.addListener(mqListener);
   }
 });
 

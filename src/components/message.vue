@@ -4,7 +4,7 @@
         <h3 style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
             <span class="nowrap">留言列表</span>
             <div style="display: flex; gap: 12px; align-items: center;">
-                <div style="margin-top: 12px; display:flex; align-items:center; justify-content:flex-end; gap:12px;">
+                <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;">
                     <n-pagination v-model:page="page" v-model:page-size="limit" :page-count="totalpages"
                         :page-sizes="[5, 10, 20, 30, 40]" size="small" show-size-picker />
                     <n-button v-if="order != 'desc'" size="small" @click="order = 'desc'; page = 1" :bordered="false">
@@ -43,11 +43,12 @@
                             <span class="name">{{ m.name || "匿名" }}</span>
                             <!-- <n-tag :bordered="false" size="small" class="ip">IP: {{ m.location || "未知" }}
                             </n-tag> -->
+                            <span :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}
+                            </span>
                         </div>
 
                         <div class="meta-right">
-                            <n-tag :bordered="false" size="small" class="ua">{{ uaInfo(m.user_agent) }}
-                            </n-tag>
+
                             <span class="time" :title="m.report_time">{{
                                 formatReportTime(m.report_time)
                                 }}</span>
@@ -77,7 +78,7 @@
 
     <div class="recaptcha-section">
         <h3>验证 & 留言</h3>
-        <div id="recaptcha-container" class="code-block"></div>
+
         <span id="recaptcha-status">{{ statusText }}</span> /
         <span class="status">{{ messageStatus }}</span>
         <div class="message-form">
@@ -115,6 +116,7 @@
                 <n-button type="primary" :disabled="submitting" @click="submitMessage"
                     style="float: left">提交留言</n-button>
             </div>
+            <div id="recaptcha-container" class="code-block"></div>
         </div>
     </div>
 </template>
@@ -122,7 +124,7 @@
 <script setup>
 import md5 from "js-md5";
 import markdownit from "markdown-it";
-import { NButton, NInput, NPagination, NTag } from "naive-ui";
+import { NButton, NInput, NPagination } from "naive-ui";
 import { UAParser } from "ua-parser-js";
 import { computed, onMounted, ref, watch } from "vue";
 import { toast } from "vue3-toastify";
@@ -135,8 +137,7 @@ const statusText = ref("未验证");
 function uaInfo(ua) {
     const { browser, cpu, os } = UAParser(ua || "");
     return `${browser.name || ""} ${browser.major || ""} /
-   ${os.name || "未知设备"}${os.version ? " " + os.version : ""} /${cpu.architecture || ""
-        }`.trim();
+   ${os.name || "未知设备"}${os.version ? " " + os.version : ""}`.trim();
 }
 
 let widget = null;
@@ -483,8 +484,7 @@ function formatReportTime(ts) {
     return d.toLocaleString();
 }
 
-// 新增：控制 Markdown 预览显示
-const previewVisible = ref(true);
+const previewVisible = ref(false);
 </script>
 
 <style scoped>
