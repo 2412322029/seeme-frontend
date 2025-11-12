@@ -13,7 +13,7 @@ import {
   NTag,
   NTooltip,
 } from "naive-ui";
-import { onBeforeMount, onMounted, reactive, ref, watch } from "vue";
+import { onBeforeMount, reactive, ref, watch } from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -50,42 +50,42 @@ function getMcInfo() {
     errormsg.mcserveraddr = mcserveraddr.value + "  错误的地址 <host:port>";
     return;
   }
-    loading.value = true;
-    console.log(loading.value);
-    McInfo(mcserveraddr.value)
-      .then((data) => {
-        if (typeof data !== "string" && data.error === undefined) {
-          mcdata.value = data;
-          router.push({
-            name: "mcstatus",
-            params: { address: mcserveraddr.value },
-          });
-          updateHistory(mcserveraddr.value);
-        } else {
-          errormsg.mcserveraddr = data;
-        }
-        loading.value = false;
-      })
-      .catch((error) => {
-        console.log("error:", error);
-        toast(error + "<br>" + JSON.stringify(error.response.data), {
-          theme: "auto",
-          type: "error",
+  loading.value = true;
+  console.log(loading.value);
+  McInfo(mcserveraddr.value)
+    .then((data) => {
+      if (typeof data !== "string" && data.error === undefined) {
+        mcdata.value = data;
+        router.push({
+          name: "mcstatus",
+          params: { address: mcserveraddr.value },
         });
-        loading.value = false;
+        updateHistory(mcserveraddr.value);
+      } else {
+        errormsg.mcserveraddr = data;
+      }
+      loading.value = false;
+    })
+    .catch((error) => {
+      console.log("error:", error);
+      toast(error + "<br>" + JSON.stringify(error.response.data), {
+        theme: "auto",
+        type: "error",
       });
-    Mclatency(mcserveraddr.value)
-      .then((data) => {
-        mclay.value = data;
-      })
-      .catch((error) => {
-        console.log("error:", error);
-        toast(error, {
-          theme: "auto",
-          type: "error",
-        });
+      loading.value = false;
+    });
+  Mclatency(mcserveraddr.value)
+    .then((data) => {
+      mclay.value = data;
+    })
+    .catch((error) => {
+      console.log("error:", error);
+      toast(error, {
+        theme: "auto",
+        type: "error",
       });
-    }
+    });
+}
 const fullpath = ref(window.location.href);
 function updateHistory(address) {
   const index = history.value.indexOf(address);
@@ -127,75 +127,34 @@ const copyText = async (text) => {
     });
   }
 };
-
-onMounted(() => {
-  // 创建并添加脚本元素
-  const script = document.createElement("script");
-  script.type = "text/javascript";
-  script.charset = "utf-8";
-  script.src = "https://widget.tsarvar.com/load.js?v=2";
-  document.head.appendChild(script);
-
-  // 模拟外部脚本初始化逻辑
-  (function (k) {
-    (window[k] || (window[k] = [])).push({
-      element: '*[data-tsarvarServerId="483478"]',
-      serverId: 483478,
-      serverIp: "49.234.20.77",
-      serverPort: 25565,
-      color: "#18181c",
-      blackMode: true,
-    });
-  })("TsarvarWidgetQueue");
-});
 </script>
 
 <template>
-  <n-card
-    ref="mc"
-    title="Mincraft Server Status"
-    style="min-width: 300px; width: 100%; max-width: 800px; overflow: auto"
-  >
-    <n-input
-      placeholder="host:port"
-      v-model:value="mcserveraddr"
-      clearable
-      autosize
-      style="width: 80%; margin: 5px"
-    />
-    <n-button type="primary" style="margin: 5px" @click="getMcInfo" :loading="loading"
-      >查询</n-button
-    >
+  <n-card ref="mc" title="Mincraft Server Status"
+    style="min-width: 300px; width: 100%; max-width: 800px; overflow: auto">
+    <div style="display: flex;">
+      <n-input placeholder="host:port" v-model:value="mcserveraddr" clearable autosize
+        style="width: 70%; margin: 5px" />
+      <n-button type="primary" style="margin: 5px" @click="getMcInfo" :loading="loading">查询</n-button>
+    </div>
+
     <div style="margin: 5px">
-      <n-dynamic-tags
-        v-model:value="history"
-        @click="mcserveraddr = $event.srcElement.innerText"
-      />
+      <n-dynamic-tags v-model:value="history" @click="mcserveraddr = $event.srcElement.innerText" />
     </div>
     <br />
-    <n-alert
-      :show-icon="false"
-      type="error"
-      closable
-      v-if="errormsg.mcserveraddr"
-    >
+    <n-alert :show-icon="false" type="error" closable v-if="errormsg.mcserveraddr">
       {{ errormsg.mcserveraddr }}
     </n-alert>
     <span v-if="!errormsg.mcserveraddr && mcdata" style="overflow: auto">
-      <n-tag style="margin: 5px"
-        >Ping to the server :{{ mclay?.time || mclay?.error }}</n-tag
-      >
-      <n-table :bordered="false">
+      <n-tag style="margin: 5px;max-width: 100%; overflow: hidden; text-overflow: ellipsis">Ping to the server :{{
+        mclay?.time || mclay?.error }}</n-tag>
+      <n-table :bordered="false" size="small" striped>
         <tbody>
           <tr>
             <td>host</td>
             <td>
               <n-tag type="success"> {{ mcserveraddr }}</n-tag>
-              <n-icon
-                @click="copyText(fullpath)"
-                title="点击复制"
-                style="margin-left: 5px; cursor: pointer"
-              >
+              <n-icon @click="copyText(fullpath)" title="点击复制" style="margin-left: 5px; cursor: pointer">
                 <ShareAlt />
               </n-icon>
             </td>
@@ -221,10 +180,7 @@ onMounted(() => {
                 <n-tooltip placement="top-start" trigger="hover">
                   <template #trigger>
                     <p style="display: flex">
-                      <n-avatar
-                        size="small"
-                        :src="'https://crafatar.com/avatars/' + p.uuid"
-                      />
+                      <n-avatar size="small" :src="'https://crafatar.com/avatars/' + p.uuid" />
                       <span style="margin: 5px; height: 20px">{{
                         p.name
                       }}</span>
@@ -245,4 +201,13 @@ onMounted(() => {
     <n-skeleton v-else text :repeat="2" />
   </n-card>
 </template>
-<style scoped></style>
+<style scoped>
+.n-table td {
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 200px;
+  min-width: 70px;
+}
+</style>

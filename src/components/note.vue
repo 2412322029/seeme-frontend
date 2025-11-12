@@ -55,7 +55,7 @@
         <div v-if="err">
             <ERROR :msg="err" title="fetch error occurred" />
         </div>
-        <div v-else style="text-align: center; width: 100%; margin-top: 50px;">
+        <div v-if="loading" style="text-align: center; width: 100%; margin-top: 50px;">
             加载中...
         </div>
     </div>
@@ -70,6 +70,7 @@ import ERROR from './error.vue';
 const md = markdownit()
 const result = ref('')
 const err = ref("")
+const loading = ref(true)
 onMounted(async () => {
     const res = await getxlog()
     if (res.status !== 200) {
@@ -77,6 +78,7 @@ onMounted(async () => {
         console.log(err.value)
     } else {
         result.value = res.data
+        loading.value = false
     }
 })
 </script>

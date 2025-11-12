@@ -123,7 +123,6 @@ function getPersonaStateflagsHTML(n) {
 
 <template>
     <n-card title="Steam Status" style="min-width: 200px;">
-        <n-button @click="getsteaminfo" text style="margin:10px 0;float:right;font-size: 20px;" title="刷新">↻</n-button>
         <div v-if="steamData['status_code'] == 200 && steamData['steam_enable']" 
         v-for="(item, index) in steamData.data.response.players"
             style="margin: 5px;" :key="index">
@@ -146,8 +145,6 @@ function getPersonaStateflagsHTML(n) {
         </div>
         <n-collapse :default-expanded-names="['1' ]">
             <n-collapse-item title="好友" name="1">
-                <n-button @click="getsteamfrinfo" text style="margin:10px 10px;float:right;font-size: 20px;"
-                    title="刷新好友">↻</n-button>
 
                 <div v-if="steamfrData['status_code'] == 200" v-for="(item, index) in steamfrData.data.response.players"
                     style="margin: 5px;" :key="index">
