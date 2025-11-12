@@ -65,7 +65,7 @@
 
 <script setup>
 //https://www.xicons.org/#/
-import { Bars, Calendar, Home, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock, Link } from '@vicons/fa';
+import { Bars, Calendar, Home, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock, Link, CommentDots } from '@vicons/fa';
 import { NDrawer, NDropdown, NIcon, NSwitch } from 'naive-ui';
 import { computed, h, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -95,6 +95,7 @@ const links = [
   { to: '/doing', label: 'Doing', icon: UserClock },
   { to: '/e/' + keysss.value || gen3Lower(), label: 'Paste', icon: Paste },
   { to: '/calendar', label: 'Calendar', icon: Calendar },
+  { to: '/comment', label: 'Comment', icon: CommentDots },
   { to: '/steam', label: 'Steam Status', icon: Steam },
   { to: '/mcstatus', label: 'Minecraft Status', icon: Server },
   { at: 'https://status.not404.cc', label: 'Site Status', icon: Link },

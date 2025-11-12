@@ -29,13 +29,12 @@
           </ul>
         </div> -->
       </div>
-      <Message></Message>
     </div>
   </div>
 </template>
 
 <script setup>
-import Message from '@/components/message.vue';
+
 import { NTable } from 'naive-ui';
 </script>
 

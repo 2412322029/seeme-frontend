@@ -9,7 +9,7 @@ const Steam = () => import("@/views/steam.vue");
 const Calendar = () => import("@/views/calendar.vue");
 const NotFound = () => import("@/views/NotFound.vue");
 const Paste = () => import("@/views/paste.vue");
-
+const Comment = () => import("@/views/comment.vue");
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -115,6 +115,18 @@ const router = createRouter({
         title: "404 Not Found",
         description: "The page you are looking for does not exist.",
         transition: "fade",
+      },
+    },
+    {
+      path: "/comment",
+      name: "comment",
+      component: Comment,
+      meta: {
+        show: true,
+        title: "Comment",
+        description: "Leave a comment",
+        transition: "fade",
+        summary: "可以在此页面留下评论。",
       },
     },
   ],

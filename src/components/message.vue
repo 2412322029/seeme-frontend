@@ -50,7 +50,7 @@
                             </n-tag>
                             <span class="time" :title="m.report_time">{{
                                 formatReportTime(m.report_time)
-                            }}</span>
+                                }}</span>
                         </div>
                     </div>
 
@@ -109,7 +109,7 @@
                 <div>
                     <n-button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? "隐藏预览" :
                         "显示预览"
-                    }}</n-button>
+                        }}</n-button>
                     <n-button type="button" @click="resetRecaptcha">重置验证</n-button>
                 </div>
                 <n-button type="primary" :disabled="submitting" @click="submitMessage"
@@ -489,13 +489,14 @@ const previewVisible = ref(true);
 
 <style scoped>
 .nowrap {
-  word-wrap: break-word;
-  word-break: break-all;
-  white-space: normal;
-  overflow-wrap: break-word;
-  max-width: 200px;
-  min-width: 70px;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 200px;
+    min-width: 70px;
 }
+
 .content img {
     max-width: 50% !important;
     height: auto;
