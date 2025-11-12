@@ -4,7 +4,8 @@ import myfooter from '@/components/myfooter.vue';
 import { darkTheme, lightTheme, NConfigProvider, NDialogProvider, NGlobalStyle, NModalProvider, NSpin, zhCN } from 'naive-ui';
 import { onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
-const darktheme = ref(true);
+const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const darktheme = ref(prefersDark);
 const loading = ref(false);
 const router = useRouter();
 const route = useRoute();
@@ -13,10 +14,7 @@ onMounted(() => {
   if (darkthemeValue !== null) {
     darktheme.value = JSON.parse(darkthemeValue);
   } else {
-    // 根据系统偏好设置暗色模式
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     darktheme.value = prefersDark;
-    // 响应系统偏好变化
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const mqListener = (e) => { darktheme.value = e.matches; };
     if (mq.addEventListener) mq.addEventListener('change', mqListener);
@@ -31,7 +29,7 @@ watch(darktheme, (newValue) => {
 router.beforeEach((to, from, next) => {
   loading.value = true;
   next();
-  document.title = to.meta.title +" - "+ to.meta.description || 'SeeMe';
+  document.title = to.meta.title + " - " + to.meta.description || 'SeeMe';
 });
 router.afterEach(() => {
   loading.value = false;
@@ -42,18 +40,18 @@ router.afterEach(() => {
   <n-config-provider :theme="darktheme ? darkTheme : lightTheme" :locale="zhCN"
     style="display: flex; flex-direction: column;align-items: center;">
     <n-modal-provider>
-    <n-dialog-provider>
-    <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
-    <section style="max-width: 800px;min-width: 300px;min-height: 90vh; position: relative;width: 100%;">
-      <Suspense>
-        <n-spin size="large" v-if="loading"
-          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-        <RouterView v-else />
-      </Suspense>
-    </section>
-    <myfooter />
-    </n-dialog-provider>
-  </n-modal-provider>
+      <n-dialog-provider>
+        <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
+        <section style="max-width: 800px;min-width: 300px;min-height: 90vh; position: relative;width: 100%;">
+          <Suspense>
+            <n-spin size="large" v-if="loading"
+              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+            <RouterView v-else />
+          </Suspense>
+        </section>
+        <myfooter />
+      </n-dialog-provider>
+    </n-modal-provider>
     <n-global-style />
   </n-config-provider>
 </template>

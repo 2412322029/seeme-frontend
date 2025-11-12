@@ -1,7 +1,6 @@
 <script setup>
 import desktopicon from "@/assets/desktop.png";
 import {
-  NButton,
   NCard,
   NCheckbox,
   NFloatButton,
@@ -12,7 +11,7 @@ import {
   NTable,
   NTimeline,
   NTimelineItem,
-  NTooltip,
+  NTooltip
 } from "naive-ui";
 import { onBeforeMount, onMounted, reactive, ref, watch } from "vue";
 import { toast } from "vue3-toastify";
@@ -131,8 +130,8 @@ function handleImageError(event) {
     <n-layout-header>
       <n-card title="你在干什么?" style="margin-bottom: 10px">
         <div>
-        <p>通过网站，可以让别人知道你在干什么。</p>
-        <p>数据可以包含电脑、浏览器、手机这几个维度。</p>
+          <p>通过网站，可以让别人知道你在干什么。</p>
+          <p>数据可以包含电脑、浏览器、手机这几个维度。</p>
           <n-table :bordered="true" stripe>
             <thead>
               <tr>
@@ -170,31 +169,19 @@ function handleImageError(event) {
           <span>显示浏览器 <n-checkbox v-model:checked="showwhat[1]" /></span>
           <span>显示手机 <n-checkbox v-model:checked="showwhat[2]" /></span>
         </n-space>
-        <n-button
-          @click="getall"
-          text
-          style="margin: 10px 0; float: right; font-size: 20px"
-          title="刷新"
-          >↻</n-button
-        >
-                <Ai />
+        
+        <Ai />
       </n-card>
     </n-layout-header>
     <n-layout-content>
       <n-space vertical>
         <n-space vertical v-if="infodata">
-          <n-card
-            v-if="showwhat[0]"
-            :title="'电脑(最新' + limitdata.pc + '项)'"
-          >
+          <n-card v-if="showwhat[0]" :title="'电脑(最新' + limitdata.pc + '项)'">
             <template #header-extra>
               <n-tooltip trigger="hover" placement="right">
                 <template #trigger>
-                  <a
-                    target="_blank"
-                    style="background-color: transparent"
-                    href="https://github.com/2412322029/seeme/releases"
-                  >
+                  <a target="_blank" style="background-color: transparent"
+                    href="https://github.com/2412322029/seeme/releases">
                     <n-float-button position="relative">?</n-float-button>
                   </a>
                 </template>
@@ -215,12 +202,8 @@ function handleImageError(event) {
                 <tr v-for="(item, index) in reversed(infodata.pc)" :key="index">
                   <td>
                     <div style="display: flex; align-items: center">
-                      <img
-                        size="small"
-                        :src="'/exe_icon/' + item.exe_name + '.png'"
-                        @error="handleImageError"
-                        style="margin: 0 5px; width: 20px"
-                      />
+                      <img size="small" :src="'/exe_icon/' + item.exe_name + '.png'" @error="handleImageError"
+                        style="margin: 0 5px; width: 20px" />
                       {{ item.exe_name }}
                     </div>
                   </td>
@@ -243,38 +226,22 @@ function handleImageError(event) {
             </n-table>
             <div v-else>
               <n-timeline>
-                <n-timeline-item
-                  v-for="(item, index) in infodata.pc"
-                  :key="index"
-                  type="success"
-                  :title="item.exe_name"
-                  :content="item.running_exe"
-                  :time="timeAgo(item.report_time)"
-                >
+                <n-timeline-item v-for="(item, index) in infodata.pc" :key="index" type="success" :title="item.exe_name"
+                  :content="item.running_exe" :time="timeAgo(item.report_time)">
                   <template #icon v-if="item.exe_name">
-                    <img
-                      :src="'/exe_icon/' + item.exe_name + '.png'"
-                      alt=""
-                      @error="handleImageError"
-                      style="width: 20px; z-index: 2"
-                    />
+                    <img :src="'/exe_icon/' + item.exe_name + '.png'" alt="" @error="handleImageError"
+                      style="width: 20px; z-index: 2" />
                   </template>
                 </n-timeline-item>
               </n-timeline>
             </div>
           </n-card>
-          <n-card
-            v-if="showwhat[1]"
-            :title="'电脑浏览器(最新' + limitdata.browser + '项)'"
-          >
+          <n-card v-if="showwhat[1]" :title="'电脑浏览器(最新' + limitdata.browser + '项)'">
             <template #header-extra>
               <n-tooltip trigger="hover" placement="right">
                 <template #trigger>
-                  <a
-                    target="_blank"
-                    style="background-color: transparent"
-                    href="https://github.com/2412322029/seeme/blob/master/report/自动汇报.js"
-                  >
+                  <a target="_blank" style="background-color: transparent"
+                    href="https://github.com/2412322029/seeme/blob/master/report/自动汇报.js">
                     <n-float-button position="relative">?</n-float-button>
                   </a>
                 </template>
@@ -290,10 +257,7 @@ function handleImageError(event) {
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(item, index) in reversed(infodata.browser)"
-                  :key="index"
-                >
+                <tr v-for="(item, index) in reversed(infodata.browser)" :key="index">
                   <td>
                     <n-tooltip trigger="hover">
                       <template #trigger>
@@ -303,12 +267,7 @@ function handleImageError(event) {
                     </n-tooltip>
                   </td>
                   <td>
-                    <a
-                      target="_blank"
-                      :href="item.url"
-                      class="nowrap-ellipsis"
-                      >{{ truncateString(item.url, 30) }}</a
-                    >
+                    <a target="_blank" :href="item.url" class="nowrap-ellipsis">{{ truncateString(item.url, 30) }}</a>
                   </td>
                   <td>{{ timeAgo(item.report_time) }}</td>
                 </tr>
@@ -316,38 +275,22 @@ function handleImageError(event) {
             </n-table>
             <div v-else>
               <n-timeline>
-                <n-timeline-item
-                  v-for="(item, index) in infodata.browser"
-                  :key="index"
-                  type="success"
-                  :title="truncateString(item.title, 70)"
-                  :content="truncateString(item.url, 70)"
-                  :time="timeAgo(item.report_time)"
-                >
+                <n-timeline-item v-for="(item, index) in infodata.browser" :key="index" type="success"
+                  :title="truncateString(item.title, 70)" :content="truncateString(item.url, 70)"
+                  :time="timeAgo(item.report_time)">
                   <template #icon>
-                    <img
-                      :src="getphoneIcon('Chrome')"
-                      alt=""
-                      srcset=""
-                      style="width: 20px; z-index: 2"
-                    />
+                    <img :src="getphoneIcon('Chrome')" alt="" srcset="" style="width: 20px; z-index: 2" />
                   </template>
                 </n-timeline-item>
               </n-timeline>
             </div>
           </n-card>
-          <n-card
-            v-if="showwhat[2]"
-            :title="'手机(最新' + limitdata.phone + '项)'"
-          >
+          <n-card v-if="showwhat[2]" :title="'手机(最新' + limitdata.phone + '项)'">
             <template #header-extra>
               <n-tooltip trigger="hover" placement="right">
                 <template #trigger>
-                  <a
-                    target="_blank"
-                    style="background-color: transparent"
-                    href="https://github.com/2412322029/seeme/blob/master/report/%E8%87%AA%E5%8A%A8%E6%B1%87%E6%8A%A5.macro"
-                  >
+                  <a target="_blank" style="background-color: transparent"
+                    href="https://github.com/2412322029/seeme/blob/master/report/%E8%87%AA%E5%8A%A8%E6%B1%87%E6%8A%A5.macro">
                     <n-float-button position="relative">?</n-float-button>
                   </a>
                 </template>
@@ -364,17 +307,10 @@ function handleImageError(event) {
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(item, index) in reversed(infodata.phone)"
-                  :key="index"
-                >
+                <tr v-for="(item, index) in reversed(infodata.phone)" :key="index">
                   <td>
                     <div style="display: flex; align-items: center">
-                      <img
-                        size="small"
-                        :src="getphoneIcon(item.app)"
-                        style="margin: 0 5px; width: 20px"
-                      />
+                      <img size="small" :src="getphoneIcon(item.app)" style="margin: 0 5px; width: 20px" />
                       {{ item.app }}
                     </div>
                   </td>
@@ -386,23 +322,11 @@ function handleImageError(event) {
             </n-table>
             <div v-else>
               <n-timeline>
-                <n-timeline-item
-                  v-for="(item, index) in infodata.phone"
-                  :key="index"
-                  type="success"
-                  :title="item.app"
-                  :content="
-                    item.battery_level + '  / wifi信号:  ' + item.wifi_ssid
-                  "
-                  :time="timeAgo(formatTimestamp(item.report_time))"
-                >
+                <n-timeline-item v-for="(item, index) in infodata.phone" :key="index" type="success" :title="item.app"
+                  :content="item.battery_level + '  / wifi信号:  ' + item.wifi_ssid
+                    " :time="timeAgo(formatTimestamp(item.report_time))">
                   <template #icon v-if="getphoneIcon(item.app)">
-                    <img
-                      :src="getphoneIcon(item.app)"
-                      alt=""
-                      srcset=""
-                      style="width: 20px; z-index: 2"
-                    />
+                    <img :src="getphoneIcon(item.app)" alt="" srcset="" style="width: 20px; z-index: 2" />
                   </template>
                 </n-timeline-item>
               </n-timeline>

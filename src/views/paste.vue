@@ -3,9 +3,7 @@
     <!-- 标题及右侧操作按钮：收藏与管理放在标题右侧 -->
     <h3 v-if="key && key.trim()" class="title-row">
       <span class="title-left">Paste</span>
-      <span class="title-key"
-        ><code v-if="validKey">{{ key }}.txt </code></span
-      >
+      <span class="title-key"><code v-if="validKey">{{ key }}.txt </code></span>
       <span class="title-actions">
         <!-- 收藏按钮始终显示，按 validKey 控制可用性 -->
         <n-button @click="toggleFavorite" :disabled="!validKey" size="small">
@@ -35,35 +33,24 @@
         <li>内容大小限制：最多 8KB（UTF-8 字节）。</li>
         <li>#TODO 保存读取时diff远程本地不同之处，提示是否执行覆盖</li>
       </ul>
-      <div
-        style="
+      <div style="
           display: flex;
           gap: 8px;
           flex-wrap: wrap;
           flex-direction: row-reverse;
-        "
-      >
-        <n-button @click="generateAndOpen" type="primary"
-          >随机打开一个</n-button
-        >
+        ">
+        <n-button @click="generateAndOpen" type="primary">随机打开一个</n-button>
       </div>
     </div>
 
     <div class="editor" v-else>
       <div style="width: 100%">
-        <n-input
-          type="textarea"
-          v-model:value="content"
-          id="msgContent"
-          :placeholder="'在此编辑内容，最多 ' + maxBytes + ' 字节（UTF-8）'"
-          rows="12"
-        ></n-input>
+        <n-input type="textarea" v-model:value="content" id="msgContent"
+          :placeholder="'在此编辑内容，最多 ' + maxBytes + ' 字节（UTF-8）'" rows="12"></n-input>
       </div>
       <div class="meta">
         <span>大小：{{ utf8Size(content) }} 字节</span>
-        <span v-if="utf8Size(content) > maxBytes" class="error"
-          >超过 8KB 限制</span
-        >
+        <span v-if="utf8Size(content) > maxBytes" class="error">超过 8KB 限制</span>
       </div>
       <div class="row">
         <n-button @click="load" :disabled="loading || !validKey">读取</n-button>
@@ -96,26 +83,15 @@
         <n-button size="small" @click="showFavorites = false">关闭</n-button>
       </div>
       <div v-if="(checkStrategy == '1')">
-        <div
-          style="
+        <div style="
             display: flex;
             gap: 8px;
             align-items: center;
             margin-bottom: 8px;
-          "
-        >
-          <n-button
-            size="small"
-            @click="selectedPaths.size > 0 ? selectAllno() : selectAll()"
-            >{{ selectedPaths.size > 0 ? "全不选" : "全选" }}</n-button
-          >
-          <n-button
-            size="small"
-            tertiary
-            @click="deleteSelected"
-            :disabled="selectedPaths.size === 0"
-            >删除选中</n-button
-          >
+          ">
+          <n-button size="small" @click="selectedPaths.size > 0 ? selectAllno() : selectAll()">{{ selectedPaths.size > 0
+            ? "全不选" : "全选" }}</n-button>
+          <n-button size="small" tertiary @click="deleteSelected" :disabled="selectedPaths.size === 0">删除选中</n-button>
           <div style="flex: 1"></div>
           <div style="font-size: 12px; color: #666">
             共 {{ favorites.length }} 项
@@ -126,15 +102,9 @@
           <div v-for="(f, idx) in favorites" :key="f.path" class="fav-item">
             <div class="fav-top">
               <!-- 使用 checked 布尔绑定，避免未初始化 value 导致的 prop 类型警告 -->
-              <n-checkbox
-                :checked="!!selectedMap[f.path]"
-                @update:checked="(val) => onSelectChangeValue(f.path, val)"
-              />
-              <div
-                class="fav-path clickable"
-                @click="openFavorite(f.path)"
-                title="点击打开"
-              >
+              <n-checkbox :checked="!!selectedMap[f.path]"
+                @update:checked="(val) => onSelectChangeValue(f.path, val)" />
+              <div class="fav-path clickable" @click="openFavorite(f.path)" title="点击打开">
                 {{ f.path }}
               </div>
               <div class="fav-created">{{ formatCreated(f.created) }}</div>
@@ -147,13 +117,8 @@
 
               <!-- 编辑状态：使用 NDynamicTags 编辑 tags -->
               <div style="padding-top: 9px">
-                <n-dynamic-tags
-                  v-model:value="f.tags"
-                  placeholder="添加备注标签，回车确认"
-                  @update:value="() => saveFavorites()"
-                  size="small"
-                  style="flex: 1"
-                />
+                <n-dynamic-tags v-model:value="f.tags" placeholder="添加备注标签，回车确认" @update:value="() => saveFavorites()"
+                  size="small" style="flex: 1" />
               </div>
 
               <!-- 单项删除已取消，批量删除请使用复选 + 删除选中 -->
@@ -162,18 +127,57 @@
         </div>
       </div>
       <div v-else-if="(checkStrategy == '2')">
-        <div>草稿管理功能待实现</div>
+        <div style="font-size:12px; color:#666">编辑内容时每3s自动保存一次</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+          <!-- <n-button size="small" @click="refreshDrafts">刷新</n-button> -->
+          <n-popconfirm @positive-click="handleDelOk" @negative-click="handleDelSuspend">
+            <template #trigger>
+              <n-button size="small" :disabled="draftCount === 0" type="error">全部清除</n-button>
+            </template>
+            确认全部删除吗
+          </n-popconfirm>
+          <div style="flex:1"></div>
+          <div style="font-size:12px; color:#666">
+            共 {{ draftCount }} 项
+          </div>
+        </div>
+
+        <div v-if="draftCount === 0" class="no-favs">
+          暂无草稿
+        </div>
+
+        <div v-else class="fav-list">
+          <div v-for="(draftKey, di) in draftKeys" :key="draftKey" class="fav-item">
+            <div class="fav-top" style="align-items:flex-start;">
+              <div style="display:flex; gap:8px; align-items:center; width:100%;">
+                <div class="fav-path clickable" title="点击打开草稿" @click="openDraft(draftKey)">
+                  ({{ di }}) paste_local:{{ draftKey }}
+                </div><span v-if="draftKey == key" style="color: #f35f5f;">(当前编辑)</span>
+                <div style="font-size:12px; color:#888; margin-left:auto;">
+                  {{ utf8Size(getLocalDraft(draftKey) || '') }} 字节
+                </div>
+              </div>
+            </div>
+
+            <div
+              style="padding-top:8px; color:#555; font-size:13px; white-space:pre-wrap; max-height:6em; overflow:hidden;">
+              {{ (getLocalDraft(draftKey) || '').slice(0, 200) }}...
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:8px; justify-content: space-between">
+              <div style="display:flex; gap:8px;">
+                <n-button size="small" @click="openDraft(draftKey)">打开</n-button>
+                <n-button size="small" tertiary @click="copyDraft(draftKey)">复制内容</n-button>
+              </div>
+              <n-button size="small" secondary type="error" @click="deleteDraft(draftKey)">删除</n-button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </n-drawer>
-  <n-modal
-    v-model:show="showModal"
-    transform-origin="center"
-    aria-label="分享二维码"
-    style="width: 300px"
-    preset="card"
-    title="分享二维码"
-  >
+  <n-modal v-model:show="showModal" transform-origin="center" aria-label="分享二维码" style="width: 300px" preset="card"
+    title="分享二维码">
     <div>
       <n-qr-code :value="origin + '/e/' + key" :size="200" />
     </div>
@@ -190,6 +194,7 @@ import {
   NIcon,
   NInput,
   NModal,
+  NPopconfirm,
   NQrCode,
   NRadioButton,
   NRadioGroup,
@@ -212,7 +217,6 @@ const saving = ref(false);
 const error = ref("");
 const success = ref("");
 const maxBytes = 8 * 1024;
-
 const validKey = computed(() => /^[A-Za-z]{3}$/.test((key.value || "").trim()));
 
 function onKeyInput() {
@@ -351,12 +355,6 @@ function generateAndOpen() {
   key.value = k;
   load();
 }
-function openExample(k) {
-  router.push({ name: "Paste", params: { id: k } });
-  key.value = k;
-  load();
-}
-
 /* ========== 新版收藏数据结构 ========== */
 const FAVORITES_KEY = "paste_favorites";
 // 每项 { path, tags:[], created, editing }
@@ -404,11 +402,11 @@ function loadFavorites() {
             const tags = Array.isArray(it.tags)
               ? it.tags
               : oldNote
-              ? oldNote
+                ? oldNote
                   .split(",")
                   .map((s) => s.trim())
                   .filter(Boolean)
-              : [];
+                : [];
             obj = {
               path: it.path || it,
               tags,
@@ -443,7 +441,7 @@ function saveFavorites() {
     favorites.value.forEach((f) => {
       if (!(f.path in selectedMap)) selectedMap[f.path] = false;
     });
-  } catch (_) {}
+  } catch (_) { }
 }
 
 function addFavorite(path, tags = []) {
@@ -470,7 +468,7 @@ function removeFavorite(path) {
 function openFavorite(path) {
   if (!path) return;
   // 如果是 /e/xxx 等内部路径，直接 push path
-  router.push(path).catch(() => {});
+  router.push(path)
 }
 
 /* 删除逻辑：只删除选中项 */
@@ -631,12 +629,13 @@ watch(
   }
 );
 
-// 添加：本地草稿前缀与辅助函数（改为：不保存空白内容）
 const LOCAL_DRAFT_PREFIX = "paste_local:";
 function getLocalDraft(k) {
   try {
     if (!k) return null;
-    const raw = localStorage.getItem(LOCAL_DRAFT_PREFIX + k);
+    const ls = typeof window !== "undefined" && window.localStorage ? window.localStorage : null;
+    if (!ls) return null;
+    const raw = ls.getItem(LOCAL_DRAFT_PREFIX + k);
     return raw === null ? null : raw;
   } catch (_) {
     return null;
@@ -645,21 +644,91 @@ function getLocalDraft(k) {
 function saveLocalDraft(k, txt) {
   try {
     if (!k) return;
+    const ls = typeof window !== "undefined" && window.localStorage ? window.localStorage : null;
+    if (!ls) return;
     // 如果内容为空或仅空白，则移除本地草稿，避免保存空字符串产生冲突提示
     if (!txt || (typeof txt === "string" && txt.trim() === "")) {
-      localStorage.removeItem(LOCAL_DRAFT_PREFIX + k);
+      ls.removeItem(LOCAL_DRAFT_PREFIX + k);
       return;
     }
-    localStorage.setItem(LOCAL_DRAFT_PREFIX + k, String(txt));
-  } catch (_) {}
+    ls.setItem(LOCAL_DRAFT_PREFIX + k, String(txt));
+  } catch (_) { }
 }
 function clearLocalDraft(k) {
   try {
     if (!k) return;
-    localStorage.removeItem(LOCAL_DRAFT_PREFIX + k);
-  } catch (_) {}
+    const ls = typeof window !== "undefined" && window.localStorage ? window.localStorage : null;
+    if (!ls) return;
+    ls.removeItem(LOCAL_DRAFT_PREFIX + k);
+  } catch (_) { }
 }
 
+const draftKeys = computed(() => {
+  try {
+    const ls = typeof window !== "undefined" && window.localStorage ? window.localStorage : null;
+    if (!ls) return [];
+    return Object.keys(ls)
+      .filter((k) => k.startsWith(LOCAL_DRAFT_PREFIX))
+      .map((k) => k.slice(LOCAL_DRAFT_PREFIX.length));
+  } catch (_) {
+    return [];
+  }
+});
+
+const draftCount = computed(() => {
+  try {
+    const ls = typeof window !== "undefined" && window.localStorage ? window.localStorage : null;
+    if (!ls) return 0;
+    return Object.keys(ls).filter((k) => k.startsWith(LOCAL_DRAFT_PREFIX)).length;
+  } catch (_) {
+    return 0;
+  }
+});
+
+function refreshDrafts() {
+  if (typeof window !== "undefined") window.location.reload();
+}
+
+function handleDelOk() {
+  clearAllDrafts();
+}
+
+function handleDelSuspend() {
+  console.log("全部删除草稿");
+}
+function clearAllDrafts() {
+  const ls = typeof window !== "undefined" && window.localStorage ? window.localStorage : null;
+  if (!ls) return;
+  const keys = Object.keys(ls).filter((k) => k.startsWith(LOCAL_DRAFT_PREFIX));
+  keys.forEach((k) => ls.removeItem(k));
+  refreshDrafts();
+}
+
+function openDraft(draftKey) {
+  if (!draftKey) return;
+  key.value = draftKey;
+  content.value = getLocalDraft(draftKey) || "";
+  showFavorites.value = false;
+  router.push({ name: "Paste", params: { id: draftKey } }).catch(() => { });
+}
+
+function deleteDraft(draftKey) {
+  try {
+    clearLocalDraft(draftKey);
+    refreshPage();
+  } catch (_) { }
+}
+
+function copyDraft(draftKey) {
+  try {
+    const t = getLocalDraft(draftKey) || "";
+    navigator.clipboard?.writeText?.(t);
+    success.value = "已复制到剪贴板";
+    setTimeout(() => (success.value = ""), 2000);
+  } catch (e) {
+    console.error(e);
+  }
+}
 // 使用 Naive UI Dialog 显示差异并返回用户选择（'remote'|'local'）
 const dialog = useDialog();
 
@@ -816,38 +885,46 @@ function stopAutoSave() {
   border: 1px solid rgba(39, 39, 42, 0.06);
   border-radius: 8px;
 }
+
 .row {
   display: flex;
   gap: 8px;
   align-items: center;
   margin-bottom: 8px;
 }
+
 .row input {
   padding: 6px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 120px;
 }
+
 .row button {
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
 }
+
 .hint {
   color: #a00;
   font-size: 13px;
   margin-bottom: 8px;
 }
+
 .status {
   margin: 6px 0;
   font-size: 13px;
 }
+
 .status.error {
   color: #b00020;
 }
+
 .status.success {
   color: #1b8f4a;
 }
+
 .editor textarea {
   width: 100%;
   min-height: 160px;
@@ -858,6 +935,7 @@ function stopAutoSave() {
   font-family: monospace;
   resize: vertical;
 }
+
 .meta {
   margin-top: 6px;
   font-size: 13px;
@@ -874,9 +952,11 @@ function stopAutoSave() {
   border-radius: 6px;
   margin-bottom: 12px;
 }
+
 .intro h4 {
   margin: 0 0 8px 0;
 }
+
 .intro p,
 .intro ul {
   margin: 6px 0;
@@ -891,16 +971,19 @@ function stopAutoSave() {
   gap: 12px;
   justify-content: space-between;
 }
+
 .title-left {
   font-size: 1em;
   font-weight: 600;
 }
+
 .title-key {
   margin-left: 8px;
   flex: 1;
   display: flex;
   justify-content: center;
 }
+
 .title-actions {
   display: flex;
   gap: 8px;
@@ -928,20 +1011,24 @@ function stopAutoSave() {
   padding: 20px;
   overflow-x: hidden;
 }
+
 .fav-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .fav-item {
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   padding-bottom: 8px;
 }
+
 .fav-top {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .fav-created {
   font-size: 12px;
   color: #888;
@@ -965,6 +1052,7 @@ function stopAutoSave() {
   background: transparent;
   padding: 4px 0;
 }
+
 .edit-note-hint {
   color: #888;
   font-size: 12px;
@@ -976,6 +1064,7 @@ function stopAutoSave() {
   overflow-x: hidden;
   box-sizing: border-box;
 }
+
 .row {
   flex-wrap: wrap;
 }

@@ -50,7 +50,7 @@
       </div>
 
       <span style="display: flex;align-items: center;">
-        <n-switch v-model:value="localDarktheme">
+        <n-switch :value="darktheme" @update:value="$emit('update:darktheme', $event)">
           <template #checked-icon>
             <n-icon :component="Moon" />
           </template>
