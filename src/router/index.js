@@ -60,7 +60,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/mcstatus/:address?",
+      path: "/mcstatus/:type?/:address?",
       name: "mcstatus",
       component: Mc,
       meta: {

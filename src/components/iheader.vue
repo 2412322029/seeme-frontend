@@ -65,7 +65,7 @@
 
 <script setup>
 //https://www.xicons.org/#/
-import { Bars, Calendar, Home, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock, Link, CommentDots } from '@vicons/fa';
+import { Bars, Calendar, CommentDots, ExternalLinkAlt, Home, Link, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock } from '@vicons/fa';
 import { NDrawer, NDropdown, NIcon, NSwitch } from 'naive-ui';
 import { computed, h, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -90,15 +90,16 @@ const gen3Lower = () => {
 };
 
 const links = [
-  { to: '/', label: 'home', icon: Home },
-  { to: '/note', label: 'Note', icon: StickyNote },
-  { to: '/doing', label: 'Doing', icon: UserClock },
-  { to: '/e/' + keysss.value || gen3Lower(), label: 'Paste', icon: Paste },
-  { to: '/calendar', label: 'Calendar', icon: Calendar },
-  { to: '/comment', label: 'Comment', icon: CommentDots },
-  { to: '/steam', label: 'Steam Status', icon: Steam },
-  { to: '/mcstatus', label: 'Minecraft Status', icon: Server },
-  { at: 'https://status.not404.cc', label: 'Site Status', icon: Link },
+  { to: '/', label: '主页', icon: Home },
+  { to: '/note', label: '笔记', icon: StickyNote },
+  { to: '/doing', label: 'doing', icon: UserClock },
+  { to: '/e/' + keysss.value || gen3Lower(), label: '剪切板', icon: Paste },
+  { to: '/calendar', label: '番剧日历', icon: Calendar },
+  { to: '/comment', label: '留言', icon: CommentDots },
+  { to: '/steam', label: 'Steam 状态', icon: Steam },
+  { to: '/mcstatus', label: 'Minecraft 状态', icon: Server },
+  { at: 'https://status.not404.cc', label: '站点状态', icon: Link },
+  { at: 'https://cloud.umami.is/share/saNvFCcrXlKMpGie', label: '访问统计', icon: ExternalLinkAlt },
 ];
 
 const toggleMenu = () => showMenu.value = !showMenu.value;

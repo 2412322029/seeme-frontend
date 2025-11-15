@@ -5,9 +5,12 @@ import {
   NAvatar,
   NButton,
   NCard,
+  NCollapse,
+  NCollapseItem,
   NDynamicTags,
   NIcon,
   NInput,
+  NSelect,
   NSkeleton,
   NTable,
   NTag,
@@ -17,7 +20,7 @@ import { onBeforeMount, reactive, ref, watch } from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-import { McInfo, Mclatency } from "./api";
+import { McInfo } from "./api";
 
 const route = useRoute(); // 获取当前路由对象
 const router = useRouter(); // 获取路由实例
@@ -27,17 +30,22 @@ const errormsg = reactive({
   mcserveraddr: "",
 });
 const mcdata = ref();
-const mclay = ref();
+const mctype = ref(route.params.type || "java");
 const history = ref(
   JSON.parse(localStorage.getItem("mcserveraddr_history") || "[]")
 );
-
+watch(mctype, (newValue) => {
+  router.push({
+    name: "mcstatus",
+    params: { address: mcserveraddr.value, type: mctype.value },
+  });
+});
 function getMcInfo() {
+  if (loading.value) { return; }
   errormsg.mcserveraddr = "";
   mcdata.value = "";
   if (!/:[0-9]{1,5}$/.test(mcserveraddr.value)) {
-    mcserveraddr.value += ":25565";
-    toast("使用默认端口 25565", {
+    toast("端口错误", {
       theme: "auto",
       type: "info",
     });
@@ -50,16 +58,21 @@ function getMcInfo() {
     errormsg.mcserveraddr = mcserveraddr.value + "  错误的地址 <host:port>";
     return;
   }
+  if (mctype.value !== "java" && mctype.value !== "bedrock" && mctype.value !== "auto") {
+    errormsg.mcserveraddr = "错误的版本类型 java/bedrock/auto";
+    return;
+  }
   loading.value = true;
   console.log(loading.value);
-  McInfo(mcserveraddr.value)
+  McInfo(mcserveraddr.value, mctype.value)
     .then((data) => {
       if (typeof data !== "string" && data.error === undefined) {
         mcdata.value = data;
         router.push({
           name: "mcstatus",
-          params: { address: mcserveraddr.value },
+          params: { address: mcserveraddr.value, type: mctype.value },
         });
+        mctype.value = data.type;
         updateHistory(mcserveraddr.value);
       } else {
         errormsg.mcserveraddr = data;
@@ -73,17 +86,6 @@ function getMcInfo() {
         type: "error",
       });
       loading.value = false;
-    });
-  Mclatency(mcserveraddr.value)
-    .then((data) => {
-      mclay.value = data;
-    })
-    .catch((error) => {
-      console.log("error:", error);
-      toast(error, {
-        theme: "auto",
-        type: "error",
-      });
     });
 }
 const fullpath = ref(window.location.href);
@@ -133,35 +135,44 @@ const copyText = async (text) => {
   <n-card ref="mc" title="Mincraft Server Status"
     style="min-width: 300px; width: 100%; max-width: 800px; overflow: auto">
     <div style="display: flex;">
-      <n-input placeholder="host:port" v-model:value="mcserveraddr" clearable autosize
-        style="width: 70%; margin: 5px" />
+      <n-select v-model:value="mctype" style="width: 100px;margin: 4px;" size="medium" :options="[{ label: 'Java版', value: 'java' },
+      { label: '基岩版', value: 'bedrock' }, { label: '自动', value: 'auto' }]" />
+      <n-input placeholder="host:port" v-model:value="mcserveraddr" @keydown.enter="getMcInfo" clearable autosize
+        style="width:50%; margin: 5px" />
       <n-button type="primary" style="margin: 5px" @click="getMcInfo" :loading="loading">查询</n-button>
     </div>
 
     <div style="margin: 5px">
-      <n-dynamic-tags v-model:value="history" @click="mcserveraddr = $event.srcElement.innerText" />
+      <n-dynamic-tags v-model:value="history" @click="(e) => {
+        const tagEl = e.target.closest('.n-tag');
+        if (tagEl) {
+          mcserveraddr = tagEl.textContent.trim();
+        }
+      }" />
     </div>
     <br />
     <n-alert :show-icon="false" type="error" closable v-if="errormsg.mcserveraddr">
       {{ errormsg.mcserveraddr }}
     </n-alert>
     <span v-if="!errormsg.mcserveraddr && mcdata" style="overflow: auto">
-      <n-tag style="margin: 5px;max-width: 100%; overflow: hidden; text-overflow: ellipsis">Ping to the server :{{
-        mclay?.time || mclay?.error }}</n-tag>
       <n-table :bordered="false" size="small" striped>
         <tbody>
           <tr>
             <td>host</td>
             <td>
-              <n-tag type="success"> {{ mcserveraddr }}</n-tag>
+              <n-tag v-once type="success">{{ route.params.address }}</n-tag>
               <n-icon @click="copyText(fullpath)" title="点击复制" style="margin-left: 5px; cursor: pointer">
                 <ShareAlt />
               </n-icon>
             </td>
           </tr>
           <tr>
+            <td>latency</td>
+            <td>{{ mcdata.latency }}</td>
+          </tr>
+          <tr>
             <td>version</td>
-            <td>{{ mcdata.version.name }}</td>
+            <td>{{ mcdata.type }} - {{ mcdata.version.name }}</td>
           </tr>
           <tr>
             <td>protocol</td>
@@ -195,6 +206,42 @@ const copyText = async (text) => {
             <td>motd</td>
             <td v-html="mcdata.motd.html"></td>
           </tr>
+          <tr v-if="mcdata.forge_data">
+            <td>forge_data</td>
+            <td>
+              fml_network_version : {{ mcdata.forge_data.fml_network_version }}
+              <n-collapse style="margin-top:6px;"  arrow-placement="right">
+                <n-collapse-item style="cursor: pointer; font-weight: 600;"
+                  :title="'Mods(' + mcdata.forge_data.mods.length + ')'">
+                  <div style="padding: 8px 12px;">
+                    <div v-for="(mod, i) in mcdata.forge_data.mods" :key="mod.modid"
+                      style="padding:2px 0; font-family: monospace; display:flex; align-items:center;">
+                      <span style=" flex:none;">{{ i + 1 }}.</span>
+                      <a :href="'https://www.curseforge.com/minecraft/search?search=' + mod.modid + '&class=mc-mods'"
+                        :title="mod.modid" target="_blank"
+                        style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px; display:inline-block;">
+                        {{ mod.modid }}
+                      </a>
+                      <span style="color:gray; margin-left:auto; flex:none;">{{ mod.version }}</span>
+                    </div>
+                  </div>
+                </n-collapse-item>
+
+              </n-collapse>
+              <n-collapse style="margin-top:6px;" arrow-placement="right">
+                <n-collapse-item style="cursor: pointer; font-weight: 600;"
+                  :title="'channels (' + mcdata.forge_data.channels.length + ')'">
+                  <div v-for="(channel, i) in mcdata.forge_data.channels" :key="channel"
+                    style="padding: 4px 0;  font-family: monospace;">
+                    {{ i + 1 }}.{{ channel.name }} <span style="color: gray;"> {{ channel.version }}
+                      <span style="float: right;"> required:{{ channel.required }} </span>
+
+                    </span>
+                  </div>
+                </n-collapse-item>
+              </n-collapse>
+            </td>
+          </tr>
         </tbody>
       </n-table>
     </span>
@@ -209,5 +256,15 @@ const copyText = async (text) => {
   overflow-wrap: break-word;
   max-width: 200px;
   min-width: 70px;
+}
+
+a {
+  color: oklch(62.3% .214 259.815);
+  font-family: monospace;
+}
+
+a:hover {
+  background-color: transparent;
+  text-decoration-line: underline;
 }
 </style>

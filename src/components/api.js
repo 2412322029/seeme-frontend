@@ -23,12 +23,8 @@ async function proxyfetch(endpoint) {
   return response.data;
 }
 
-export async function McInfo(serverAddress) {
-  return fetchData(`/get_mcinfo/${serverAddress}`);
-}
-
-export async function Mclatency(serverAddress) {
-  return fetchData(`/get_mclatency/${serverAddress}`);
+export async function McInfo(serverAddress, type) {
+  return fetchData(`/get_mcinfo/${type}/${serverAddress}`);
 }
 
 export async function getinfo() {
