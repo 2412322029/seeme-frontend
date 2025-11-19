@@ -5,6 +5,7 @@
       <n-tag :bordered="false" size="small" style="margin: 5px;">Deploy Time: {{ devInfo.deploy_time }}</n-tag>
       <n-tag :bordered="false" size="small" style="margin: 5px;">Git Hash: {{ devInfo.git_hash }}</n-tag>    
       <n-tag :bordered="false" size="small" style="margin: 5px;">Access Count: {{ devInfo.access_count }}</n-tag>    
+      <n-tag :bordered="false" size="small" style="margin: 5px;">IP: {{ devInfo.requester_location }} | {{ devInfo.requester_ip }}</n-tag>    
     </span>
     <div v-if="hitokoto" style="padding: 10px; text-align: center; max-width: 800px;">
       <span>{{ hitokoto.hitokoto }} —— {{ hitokoto.from }}

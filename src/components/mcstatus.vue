@@ -207,12 +207,11 @@ const copyText = async (text) => {
             <td v-html="mcdata.motd.html"></td>
           </tr>
           <tr v-if="mcdata.forge_data">
-            <td>forge_data</td>
-            <td>
-              fml_network_version : {{ mcdata.forge_data.fml_network_version }}
-              <n-collapse style="margin-top:6px;"  arrow-placement="right">
+            <td colspan="2">
+              forge_data -> fml_network_version : {{ mcdata.forge_data.fml_network_version }}
+              <n-collapse style="margin-top:6px;" arrow-placement="right">
                 <n-collapse-item style="cursor: pointer; font-weight: 600;"
-                  :title="'Mods(' + mcdata.forge_data.mods.length + ')'">
+                  :title="'Mod List(' + mcdata.forge_data.mods.length + ')'">
                   <div style="padding: 8px 12px;">
                     <div v-for="(mod, i) in mcdata.forge_data.mods" :key="mod.modid"
                       style="padding:2px 0; font-family: monospace; display:flex; align-items:center;">
@@ -222,7 +221,9 @@ const copyText = async (text) => {
                         style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px; display:inline-block;">
                         {{ mod.modid }}
                       </a>
-                      <span style="color:gray; margin-left:auto; flex:none;">{{ mod.version }}</span>
+                      <span style="color:gray; margin-left:auto; flex:none;">
+                        {{ mod.version.replace("<not required for client>", "server") }}
+                      </span>
                     </div>
                   </div>
                 </n-collapse-item>
