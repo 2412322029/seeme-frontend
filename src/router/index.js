@@ -10,6 +10,7 @@ const Calendar = () => import("@/views/calendar.vue");
 const NotFound = () => import("@/views/NotFound.vue");
 const Paste = () => import("@/views/paste.vue");
 const Comment = () => import("@/views/comment.vue");
+const Admin = () => import("@/views/admin.vue");
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -127,6 +128,17 @@ const router = createRouter({
         description: "Leave a comment",
         transition: "fade",
         summary: "可以在此页面留下评论。",
+      },
+    },
+     {
+      path: "/admin",
+      name: "admin",
+      component: Admin,
+      meta: {
+        title: "Admin",
+        description: "Admin panel",
+        transition: "fade",
+        summary: "管理员面板。",
       },
     },
   ],

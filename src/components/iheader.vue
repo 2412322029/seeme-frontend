@@ -69,7 +69,7 @@
 
 <script setup>
 //https://www.xicons.org/#/
-import { Bars, Calendar, CommentDots, ExternalLinkAlt, Home, Link, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock } from '@vicons/fa';
+import { Bars, Calendar, CommentDots, ExternalLinkAlt, Home, Link, Moon, Paste, Server, Steam, StickyNote, Sun, UserClock, SolarPanel } from '@vicons/fa';
 import { NButton, NDrawer, NDropdown, NIcon, NLayoutHeader, NSwitch } from 'naive-ui';
 import { computed, h, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -102,6 +102,7 @@ const links = [
   { to: '/comment', label: '留言', icon: CommentDots },
   { to: '/steam', label: 'Steam 状态', icon: Steam },
   { to: '/mcstatus', label: 'Minecraft 状态', icon: Server },
+  { to: '/admin', label: '管理', icon: SolarPanel },
   { at: 'https://status.not404.cc', label: '站点状态', icon: Link },
   { at: 'https://cloud.umami.is/share/saNvFCcrXlKMpGie', label: '访问统计', icon: ExternalLinkAlt },
 ];

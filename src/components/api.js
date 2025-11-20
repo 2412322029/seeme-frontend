@@ -15,6 +15,15 @@ async function fetchData(endpoint) {
   }
   return response.data;
 }
+async function fetchAdmin(endpoint) {
+  axiosInstance.defaults.headers.common["API-KEY"] =
+    localStorage.getItem("admin_api_key") || "";
+  const response = await axiosInstance.get(endpoint);
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
+  return response.data;
+}
 async function proxyfetch(endpoint) {
   const response = await axios.get(proxy + endpoint);
   if (response.status !== 200) {
@@ -182,4 +191,30 @@ export async function setPaste(key, data) {
     }
   );
   return res.data;
+}
+
+export async function get_redis() {
+  return fetchAdmin(`/redis`);
+}
+
+export async function isauth() {
+   return await fetchAdmin(`/auth`)
+}
+
+export async function logfilelist() {
+   return await fetchAdmin(`/logfilelist`)
+}
+export async function logfile(filename, opts = {}) {
+  // 支持可选分页参数：{ lines, page, start_line }
+  // 返回完整的 axios Response（包含 headers 和 data），以便前端读取 X-* header
+  axiosInstance.defaults.headers.common["API-KEY"] =
+    localStorage.getItem("admin_api_key") || "";
+  const params = { filename };
+  if (opts && typeof opts === "object") {
+    if (opts.lines != null) params.lines = opts.lines;
+    if (opts.page != null) params.page = opts.page;
+    if (opts.start_line != null) params.start_line = opts.start_line;
+  }
+  const res = await axiosInstance.get(`/logfile`, { params, responseType: "text" });
+  return res;
 }
