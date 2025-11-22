@@ -1,7 +1,7 @@
 <script setup>
 import win from '@/assets/win.png';
 import {
-    NTooltip
+  NTooltip
 } from "naive-ui";
 import { onBeforeMount, ref } from 'vue';
 import { toast } from "vue3-toastify";
@@ -42,7 +42,7 @@ onBeforeMount(() => {
       <div v-for="item, index in windowdata.activity_window" :key="index" class="icitem">
         <n-tooltip trigger="hover" placement="top">
           <template #trigger>
-            <img :src="'/exe_icon/' + item.exe_name + '.png'" class="ic"></img>
+            <img :src="baseURL + '/exe_icon/' + item.exe_name + '.png'" class="ic"></img>
           </template>
           {{ item.title }}
         </n-tooltip>

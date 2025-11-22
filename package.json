@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "page": "vite build --mode edgeone && powershell edgeone pages deploy -n seeme ./dist --token $env:EDGEONE_API_TOKEN",
     "build": "vite build",
     "preview": "vite preview"
   },

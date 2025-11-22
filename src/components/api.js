@@ -1,14 +1,16 @@
 import axios from "axios";
 const isDevelopment = process.env.NODE_ENV === "development";
-export const baseURL = isDevelopment
+let baseURL = isDevelopment
   ? "http://localhost:5173/api"
   : location.origin + "/api";
+if (import.meta.env.VITE_IS_EDGEONE) {
+  baseURL = import.meta.env.VITE_API_BASE_URL;
+  console.info(baseURL);
+}
 const axiosInstance = axios.create({
   baseURL,
 });
-if (process.env.IS_EDGEONE) {
-  baseURL = "https://i.not404.cc/api";
-}
+export { baseURL };
 export const proxy = baseURL + "/proxy?url=";
 // const proxy = '';
 async function fetchData(endpoint) {
@@ -201,11 +203,11 @@ export async function get_redis() {
 }
 
 export async function isauth() {
-   return await fetchAdmin(`/auth`)
+  return await fetchAdmin(`/auth`);
 }
 
 export async function logfilelist() {
-   return await fetchAdmin(`/logfilelist`)
+  return await fetchAdmin(`/logfilelist`);
 }
 export async function logfile(filename, opts = {}) {
   // 支持可选分页参数：{ lines, page, start_line }
@@ -218,6 +220,9 @@ export async function logfile(filename, opts = {}) {
     if (opts.page != null) params.page = opts.page;
     if (opts.start_line != null) params.start_line = opts.start_line;
   }
-  const res = await axiosInstance.get(`/logfile`, { params, responseType: "text" });
+  const res = await axiosInstance.get(`/logfile`, {
+    params,
+    responseType: "text",
+  });
   return res;
 }
