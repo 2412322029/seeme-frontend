@@ -6,6 +6,9 @@ export const baseURL = isDevelopment
 const axiosInstance = axios.create({
   baseURL,
 });
+if (process.env.IS_EDGEONE) {
+  baseURL = "https://i.not404.cc/api";
+}
 export const proxy = baseURL + "/proxy?url=";
 // const proxy = '';
 async function fetchData(endpoint) {

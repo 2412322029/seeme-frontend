@@ -4,7 +4,9 @@ import { defineConfig } from "vite";
 import vueDevTools from "vite-plugin-vue-devtools";
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), 
+  plugins: [
+    vue(),
+    vueDevTools(),
     // visualizer({})
   ],
   resolve: {
@@ -13,7 +15,7 @@ export default defineConfig({
     },
   },
   build: {
-    minify: "terser", // 启用 terser 压缩
+    cssCodeSplit: false, // 禁用 CSS 代码拆分
     terserOptions: {
       compress: {
         drop_console: true,
@@ -33,11 +35,19 @@ export default defineConfig({
           }
           return `assets/[name]-[hash].[ext]`; // 其他资源文件添加 hash 值
         },
-        manualChunks(id) {
-
-        },
+        manualChunks(id) {},
       },
     },
+  },
+  customLogger: {
+    warn(message, options) {
+      // 忽略包含 'INVALID_PURE_ANNOTATION_POSITION' 的警告
+      if (message.includes("INVALID_PURE_ANNOTATION_POSITION")) {
+        return;
+      }
+    },
+    info: (msg) => console.log(msg),
+    error: (msg) => console.error(msg),
   },
   server: {
     port: 5173,

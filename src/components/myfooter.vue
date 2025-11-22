@@ -3,29 +3,34 @@
   margin:10px;flex-direction: column;border-top: 1px solid rgb(39, 39, 42);">
     <span style="display: flex;flex-wrap: wrap;align-items: center; justify-content: center;">
       <n-tag :bordered="false" size="small" style="margin: 5px;">Deploy Time: {{ devInfo.deploy_time }}</n-tag>
-      <n-tag :bordered="false" size="small" style="margin: 5px;">Git Hash: {{ devInfo.git_hash }}</n-tag>    
-      <n-tag :bordered="false" size="small" style="margin: 5px;">Access Count: {{ devInfo.access_count }}</n-tag>    
-      <n-tag :bordered="false" size="small" style="margin: 5px;">IP: {{ devInfo.requester_location }} | {{ devInfo.requester_ip }}</n-tag>    
+      <n-tag :bordered="false" size="small" style="margin: 5px;">Git Hash: {{ devInfo.git_hash }}</n-tag>
+      <n-tag :bordered="false" size="small" style="margin: 5px;">Access Count: {{ devInfo.access_count }}</n-tag>
+      <!-- <n-tag :bordered="false" size="small" style="margin: 5px;">IP: {{ devInfo.requester_location }} | {{ devInfo.requester_ip }}</n-tag>     -->
+    </span>
+    <span style="display: flex;flex-wrap: wrap;align-items: center; justify-content: center;">
+      <n-tag :bordered="false" size="small" style="margin: 5px;">
+        Your IP: {{ devInfo.requester_location }} <a :href="`https://www.ipshudi.com/${devInfo.requester_ip}.htm`" target="_blank">
+          {{ devInfo.requester_ip }}
+        </a>
+      </n-tag>
+      <n-tag :bordered="false" size="small" style="margin: 5px;">
+        Forwarded IP: <a v-for="i in devInfo.forwarded_ip" :href="`https://www.ipshudi.com/${i}.htm`" target="_blank">
+          {{ i }}
+        </a>
+      </n-tag>
     </span>
     <div v-if="hitokoto" style="padding: 10px; text-align: center; max-width: 800px;">
       <span>{{ hitokoto.hitokoto }} —— {{ hitokoto.from }}
         <template v-if="hitokoto.from_who">
           ({{ hitokoto.from_who }})
         </template>
-        
+
       </span>
     </div>
     <div style="padding: 10px;">
       <span>© 2025 Lolik | Powered by <a href="https://github.com/2412322029/seeme" target="_blank">seeme</a></span>
     </div>
-    <n-button
-      v-show="showButton"
-      circle
-      type="primary"
-      size="large"
-      :style="buttonStyle"
-      @click="scrollToTop"
-    >
+    <n-button v-show="showButton" circle type="primary" size="large" :style="buttonStyle" @click="scrollToTop">
       ↑
     </n-button>
   </footer>
@@ -76,12 +81,12 @@ const buttonStyle = computed(() => {
   return {
     position: 'fixed',
     bottom: '60px',
-    right: window.innerWidth < 800 ? '20px' : '50px', 
+    right: window.innerWidth < 800 ? '20px' : '50px',
   };
 });
 
 onBeforeMount(() => {
-      getdevInfo();
+  getdevInfo();
   fetchHitokoto();
 });
 
@@ -99,3 +104,8 @@ onUnmounted(() => {
   });
 });
 </script>
+<style>
+a:hover{
+  background-color: transparent;
+}
+</style>
