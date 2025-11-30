@@ -34,6 +34,9 @@
 				<n-tab-pane name="logs" tab="Logs">
 					<div style="padding:8px 0"><Log /></div>
 				</n-tab-pane>
+        <n-tab-pane name="gdmap" tab="高德地图">
+          <div style="padding:8px 0"><gdmap /></div>
+        </n-tab-pane>
 			</n-tabs>
 		</div>
 	</div>
@@ -44,6 +47,7 @@
 <script setup>
 import { isauth } from '@/components/api';
 import auth from '@/components/auth.vue';
+import gdmap from '@/components/gdmap.vue';
 import Log from '@/components/logs.vue';
 import redis from '@/components/redis.vue';
 import { NAlert, NButton, NCard, NSpace, NSpin, NTabPane, NTabs } from 'naive-ui';
@@ -65,7 +69,7 @@ function parseHashTab() {
     const m = h.match(/(?:tab=)?(.+)/);
     if (m && m[1]) {
       const t = m[1].toString().toLowerCase();
-      if (t === 'redis' || t === 'logs') return t;
+      return t;
     }
   } catch (_) {}
   return null;

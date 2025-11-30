@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@mdit/plugin-img-size": "^0.22.3",
     "axios": "^1.13.2",
     "crossbell": "^1.13.1",

@@ -3,6 +3,7 @@
         <n-card title="日志列表" size="small" style="">
             <div style="display:flex;gap:8px;margin-bottom:8px;">
                 <n-button size="small" @click="loadList">刷新</n-button>
+                <n-button size="small" @click="openLocalFile">打开本地日志</n-button>
                 <n-button size="small" tertiary @click="clearSelection" :disabled="!selected">清除选择</n-button>
             </div>
             <n-spin :show="loadingList" style="min-height:120px">
@@ -416,6 +417,84 @@ function appendNextPage() {
     let end = parseInt(endLine.value || 0);
     let lines = parseInt(linesPerPage.value);
     loadFile({ start_line: end + 1, lines, append: true });
+}
+
+// 打开本地日志（优先使用 File System Access API 并请求 willReadFrequently）
+async function openLocalFile() {
+    if (typeof window.showOpenFilePicker === "function") {
+        try {
+            const [handle] = await window.showOpenFilePicker({
+                multiple: false,
+                types: [
+                    {
+                        description: "日志文件",
+                        accept: { "text/plain": [".log", ".txt"] },
+                    },
+                ],
+                excludeAcceptAllOption: false,
+            });
+            // 请求只读权限并表明会频繁读取
+            const perm = await handle.requestPermission({ mode: "read", willReadFrequently: true });
+            if (perm !== "granted") {
+                // 如果拒绝，尝试通过 queryPermission 询问或提示
+                const q = await handle.queryPermission({ mode: "read" });
+                if (q !== "granted") {
+                    console.warn("本地文件读取权限未授予");
+                    return;
+                }
+            }
+            const file = await handle.getFile();
+            const text = await file.text();
+            selected.value = file.name || "local";
+            content.value = text;
+            showModal.value = true;
+            // 因为是本地文件，清除后仍可保留 startLine/fileSize 等为 null
+            fileSize.value = formatSize(file.size ?? null) || null;
+            startLine.value = null;
+            endLine.value = null;
+            returnedLines.value = null;
+            hasMore.value = false;
+            isPartial.value = false;
+            // 尝试滚动到底
+            await nextTick();
+            if (autoFollow.value) await ensureScrollBottom();
+        } catch (e) {
+            console.error("openLocalFile error", e);
+            errToast(e?.message || String(e));
+        }
+    } else {
+        // 简单回退：创建一个隐藏 input[type=file] 并触发选择
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".log,.txt,text/plain";
+        input.style.display = "none";
+        input.onchange = async (ev) => {
+            const f = ev.target.files && ev.target.files[0];
+            if (!f) return;
+            try {
+                const text = await f.text();
+                selected.value = f.name || "local";
+                content.value = text;
+                showModal.value = true;
+                fileSize.value = formatSize(f.size ?? null) || null;
+                await nextTick();
+                if (autoFollow.value) await ensureScrollBottom();
+            } catch (err) {
+                console.error("file read fallback error", err);
+                errToast(err?.message || String(err));
+            } finally {
+                document.body.removeChild(input);
+            }
+        };
+        document.body.appendChild(input);
+        input.click();
+    }
+}
+
+// 小工具：简短错误提示（可替换为应用内通知）
+function errToast(msg) {
+    // 保守实现：把错误写入 content 区或控制台
+    console.warn(msg);
 }
 </script>
 

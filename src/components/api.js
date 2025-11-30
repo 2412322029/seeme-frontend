@@ -226,3 +226,7 @@ export async function logfile(filename, opts = {}) {
   });
   return res;
 }
+
+export async function qlocation(start, end) {
+  return await fetchAdmin(`/get_location_by_time?start=${start}&end=${end}`);
+}
