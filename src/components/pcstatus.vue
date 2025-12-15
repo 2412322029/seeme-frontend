@@ -203,7 +203,7 @@ function handleImageError(event) {
                 <tr v-for="(item, index) in reversed(infodata.pc)" :key="index">
                   <td>
                     <div style="display: flex; align-items: center">
-                      <img size="small" :src="baseURL + '/exe_icon/' + item.exe_name + '.png'" @error="handleImageError"
+                      <img size="small" :src="'/exe_icon/' + item.exe_name + '.png'" @error="handleImageError"
                         style="margin: 0 5px; width: 20px" />
                       {{ item.exe_name }}
                     </div>
@@ -230,7 +230,7 @@ function handleImageError(event) {
                 <n-timeline-item v-for="(item, index) in infodata.pc" :key="index" type="success" :title="item.exe_name"
                   :content="item.running_exe" :time="timeAgo(item.report_time)">
                   <template #icon v-if="item.exe_name">
-                    <img :src="baseURL + '/exe_icon/' + item.exe_name + '.png'" alt="" @error="handleImageError"
+                    <img :src="'/exe_icon/' + item.exe_name + '.png'" alt="" @error="handleImageError"
                       style="width: 20px; z-index: 2" />
                   </template>
                 </n-timeline-item>

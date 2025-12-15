@@ -1,7 +1,7 @@
 <template>
   <div class="paste-page">
     <!-- 标题及右侧操作按钮：收藏与管理放在标题右侧 -->
-    <h3 v-if="key && key.trim()" class="title-row">
+    <h3 class="title-row">
       <span class="title-left">Paste</span>
       <span class="title-key"><code v-if="validKey">{{ key }}.txt </code></span>
       <span class="title-actions">
@@ -53,10 +53,18 @@
         <span v-if="utf8Size(content) > maxBytes" class="error">超过 8KB 限制</span>
       </div>
       <div class="row">
-        <n-button @click="load" :disabled="loading || !validKey">读取</n-button>
-        <n-button @click="save" :disabled="saving || !validKey">保存</n-button>
-        <n-button @click="copyToClipboard" :disabled="!content">复制</n-button>
-        <n-button @click="pasteFromClipboard">粘贴</n-button>
+        <n-button @click="load" :disabled="loading || !validKey">
+          <n-icon style="padding: 0 5px 0 0;" :component="CloudDownloadAlt" />
+          读取</n-button>
+        <n-button @click="save" :disabled="saving || !validKey">
+          <n-icon style="padding: 0 5px 0 0;" :component="CloudUploadAlt" />
+          保存</n-button>
+        <n-button @click="copyToClipboard" :disabled="!content">
+          <n-icon style="padding: 0 5px 0 0;" :component="CopyRegular" />
+          复制</n-button>
+        <n-button @click="pasteFromClipboard">
+          <n-icon style="padding: 0 5px 0 0;" :component="Paste" />
+          粘贴</n-button>
       </div>
 
       <div class="hint" v-if="!validKey">
@@ -185,7 +193,7 @@
 </template>
 
 <script setup>
-import { AlignRight, Qrcode, Star } from "@vicons/fa";
+import { AlignRight, CloudDownloadAlt, CloudUploadAlt, CopyRegular, Paste, Qrcode, Star } from "@vicons/fa";
 import {
   NButton,
   NCheckbox,
@@ -208,6 +216,9 @@ const showModal = ref(false);
 const origin = import.meta.env.SSR ? "" : window.location.origin;
 const route = useRoute(); // 获取当前路由对象
 const router = useRouter(); // 获取路由实例
+if(route.params.id.length>3){
+  router.push({ name: "Paste", params: { id: route.params.id ? route.params.id.slice(0,3) : undefined } });
+}
 const key = ref(route.params.id || "");
 const content = ref("");
 // 新增：标记是否已保存过当前 key（控制收藏按钮显示）
@@ -218,6 +229,7 @@ const error = ref("");
 const success = ref("");
 const maxBytes = 8 * 1024;
 const validKey = computed(() => /^[A-Za-z]{3}$/.test((key.value || "").trim()));
+
 
 function onKeyInput() {
   // 强制大写/小写可选，这里保留用户输入不改变
@@ -884,6 +896,8 @@ function stopAutoSave() {
   padding: 12px;
   border: 1px solid rgba(39, 39, 42, 0.06);
   border-radius: 8px;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 .row {

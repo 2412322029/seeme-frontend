@@ -1,3 +1,4 @@
+import { Toolbox } from "@vicons/fa";
 import { createRouter, createWebHistory } from "vue-router";
 
 const Note = () => import("@/views/note.vue");
@@ -11,6 +12,7 @@ const NotFound = () => import("@/views/NotFound.vue");
 const Paste = () => import("@/views/paste.vue");
 const Comment = () => import("@/views/comment.vue");
 const Admin = () => import("@/views/admin.vue");
+const Tool = () => import("@/views/toolbox.vue");
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -139,6 +141,18 @@ const router = createRouter({
         description: "Admin panel",
         transition: "fade",
         summary: "管理员面板。",
+      },
+    },
+    {
+      path: "/tools",
+      name: "tools",
+      component: Tool,
+      meta: {
+        show: true,
+        title: "Tools",
+        description: "Tools panel",
+        transition: "fade",
+        summary: "工具面板。",
       },
     },
   ],

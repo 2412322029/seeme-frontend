@@ -50,6 +50,7 @@ import auth from '@/components/auth.vue';
 import gdmap from '@/components/gdmap.vue';
 import Log from '@/components/logs.vue';
 import redis from '@/components/redis.vue';
+import router from '@/router';
 import { NAlert, NButton, NCard, NSpace, NSpin, NTabPane, NTabs } from 'naive-ui';
 import { onMounted, ref, watch } from 'vue';
 
@@ -114,8 +115,7 @@ async function checkAuth() {
 }
 
 function onAuthSuccess() {
-  isAuthenticated.value = true;
-  error.value = '';
+  router.go(0); // 刷新页面
 }
 
 function logout() {

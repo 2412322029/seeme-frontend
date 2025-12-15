@@ -8,7 +8,7 @@
             <tr v-for="r in $router.getRoutes().filter(rt => rt.path && rt.meta?.show === true)" :key="r.path">
               <td>
                 <strong>
-                  <a :href="r.path.replace(/:\w+\??/g, '')" :title="r.meta?.description">
+                  <a :href="r.path.replace(/:\w+\??/g, '').replace(`//`, `/`)" :title="r.meta?.description">
                     {{ r.meta?.title || r.name || r.path }}
                   </a>
                 </strong>
