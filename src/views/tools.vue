@@ -1,7 +1,6 @@
 <template>
   <div class="tools-container">
     <!-- 如果有工具ID参数，则显示对应的工具组件 -->
-    <!-- 面包屑导航 -->
     <div v-if="currentToolId" class="breadcrumb-section">
       <n-breadcrumb>
         <n-breadcrumb-item @click="router.push('/tools')">
@@ -45,14 +44,10 @@
 </template>
 
 <script setup>
-import bgm from '@/components/bgm.vue';
-import { Calculator, Lock, Search, Toolbox } from '@vicons/fa';
+import { Calculator, CalendarRegular, Lock, Search, Toolbox } from '@vicons/fa';
 import { NBreadcrumb, NBreadcrumbItem, NCard, NIcon, NInput, NSpace } from 'naive-ui';
-import { computed, ref, shallowRef } from 'vue';
+import { computed, defineAsyncComponent, ref, shallowRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import AgvTool from './tools/agv.vue';
-import base64Tool from './tools/base64.vue';
-import md5Tool from './tools/md5.vue';
 const router = useRouter();
 const route = useRoute();
 
@@ -63,36 +58,41 @@ const tools = shallowRef([
     name: 'agv',
     title: 'AGV-EQ协议解析工具',
     description: '用于解析AGV设备的通信协议数据，查看设备状态和端口信息。',
-    component: AgvTool,
+    component: () => import('./tools/agv.vue'),
     icon: Toolbox
   },
   {
     name: 'base64',
     title: 'Base64编码/解码工具',
     description: '用于对文本进行Base64编码和解码操作。',
-    component: base64Tool,
+    component: () => import('./tools/base64.vue'),
     icon: Lock
   },
   {
     name: 'md5',
     title: 'MD5哈希工具',
     description: '用于生成文本的MD5哈希值。',
-    component: md5Tool,
+    component: () => import('./tools/md5.vue'),
     icon: Calculator
   },
   {
     name: 'bgm',
     title: 'bgm.tv',
     description: 'Bangumi 番组计划',
-    component: bgm,
-    icon: Calculator
+    component: () => import('../components/bgm.vue'),  
+    icon: CalendarRegular
   },
   // 可以在此处添加更多工具
 ]);
 
 const currentToolId = computed(() => route.params.id);
 const currentTool = computed(() => tools.value.find(tool => tool.name === currentToolId.value));
-const currentToolComponent = computed(() => currentTool.value?.component);
+const currentToolComponent = computed(() => {
+  if (currentTool.value?.component) {
+    return defineAsyncComponent(currentTool.value.component);
+  }
+  return null;
+});
 
 const filteredTools = computed(() => {
   if (!searchQuery.value) {
