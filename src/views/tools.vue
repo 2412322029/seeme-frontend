@@ -45,13 +45,14 @@
 </template>
 
 <script setup>
-import { Search, Toolbox } from '@vicons/fa';
+import bgm from '@/components/bgm.vue';
+import { Calculator, Lock, Search, Toolbox } from '@vicons/fa';
 import { NBreadcrumb, NBreadcrumbItem, NCard, NIcon, NInput, NSpace } from 'naive-ui';
-import AgvTool from './tools/agv.vue';
-
-import { computed, ref, shallowRef  } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
+import AgvTool from './tools/agv.vue';
+import base64Tool from './tools/base64.vue';
+import md5Tool from './tools/md5.vue';
 const router = useRouter();
 const route = useRoute();
 
@@ -64,7 +65,28 @@ const tools = shallowRef([
     description: '用于解析AGV设备的通信协议数据，查看设备状态和端口信息。',
     component: AgvTool,
     icon: Toolbox
-  }
+  },
+  {
+    name: 'base64',
+    title: 'Base64编码/解码工具',
+    description: '用于对文本进行Base64编码和解码操作。',
+    component: base64Tool,
+    icon: Lock
+  },
+  {
+    name: 'md5',
+    title: 'MD5哈希工具',
+    description: '用于生成文本的MD5哈希值。',
+    component: md5Tool,
+    icon: Calculator
+  },
+  {
+    name: 'bgm',
+    title: 'bgm.tv',
+    description: 'Bangumi 番组计划',
+    component: bgm,
+    icon: Calculator
+  },
   // 可以在此处添加更多工具
 ]);
 
