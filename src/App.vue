@@ -1,7 +1,7 @@
 <script setup>
 import iheader from '@/components/iheader.vue';
 import myfooter from '@/components/myfooter.vue';
-import { darkTheme, lightTheme, NConfigProvider, NDialogProvider, NGlobalStyle, NModalProvider, NSpin, zhCN } from 'naive-ui';
+import { darkTheme, lightTheme, NConfigProvider, NDialogProvider, NGlobalStyle, NMessageProvider, NModalProvider, NSpin, zhCN } from 'naive-ui';
 import { onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -39,19 +39,21 @@ router.afterEach(() => {
 <template>
   <n-config-provider :theme="darktheme ? darkTheme : lightTheme" :locale="zhCN"
     style="display: flex; flex-direction: column;align-items: center;">
-    <n-modal-provider>
-      <n-dialog-provider>
-        <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
-        <section style="max-width: 800px;min-width: 300px;min-height: 90vh; position: relative;width: 100%;">
-          <Suspense>
-            <n-spin size="large" v-if="loading"
-              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-            <RouterView v-else />
-          </Suspense>
-        </section>
-        <myfooter />
-      </n-dialog-provider>
-    </n-modal-provider>
+    <n-message-provider>
+      <n-modal-provider>
+        <n-dialog-provider>
+          <iheader :darktheme="darktheme" @update:darktheme="value => darktheme = value" />
+          <section style="max-width: 800px;min-width: 300px;min-height: 90vh; position: relative;width: 100%;">
+            <Suspense>
+              <n-spin size="large" v-if="loading"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+              <RouterView v-else />
+            </Suspense>
+          </section>
+          <myfooter />
+        </n-dialog-provider>
+      </n-modal-provider>
+    </n-message-provider>
     <n-global-style />
   </n-config-provider>
 </template>

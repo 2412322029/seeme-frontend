@@ -28,7 +28,7 @@
       </span>
     </div>
     <div style="padding: 10px;">
-      <span>© 2025 Lolik | Powered by <a href="https://github.com/2412322029/seeme" target="_blank">seeme</a></span>
+      <span>© 2025-2026 Lolik | Powered by <a href="https://github.com/2412322029/seeme" target="_blank">seeme</a></span>
     </div>
     <n-button v-show="showButton" circle type="primary" size="large" :style="buttonStyle" @click="scrollToTop">
       ↑

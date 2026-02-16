@@ -37,6 +37,9 @@
         <n-tab-pane name="gdmap" tab="高德地图">
           <div style="padding:8px 0"><gdmap /></div>
         </n-tab-pane>
+        <n-tab-pane name="noteadmin" tab="笔记管理">
+          <div style="padding:8px 0"><noteadmin /></div>
+        </n-tab-pane>
 			</n-tabs>
 		</div>
 	</div>
@@ -50,6 +53,7 @@ import auth from '@/components/auth.vue';
 import gdmap from '@/components/gdmap.vue';
 import Log from '@/components/logs.vue';
 import redis from '@/components/redis.vue';
+import noteadmin from '@/components/noteadmin.vue';
 import router from '@/router';
 import { NAlert, NButton, NCard, NSpace, NSpin, NTabPane, NTabs } from 'naive-ui';
 import { onMounted, ref, watch } from 'vue';

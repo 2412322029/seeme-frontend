@@ -12,6 +12,9 @@ const Paste = () => import("@/views/paste.vue");
 const Comment = () => import("@/views/comment.vue");
 const Admin = () => import("@/views/admin.vue");
 const Tools = () => import("@/views/tools.vue");
+const ArticleEdit = () => import("@/views/article-edit.vue");
+const ArticleDetail = () => import("@/views/article-detail.vue");
+const BlogList = () => import("@/components/blog-list.vue");
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -140,6 +143,40 @@ const router = createRouter({
         description: "Admin panel",
         transition: "fade",
         summary: "管理员面板。",
+      },
+    },
+    {
+      path: "/admin/article/:id?",
+      name: "article-edit",
+      component: ArticleEdit,
+      meta: {
+        title: "编辑文章",
+        description: "Edit article",
+        transition: "fade",
+        summary: "编辑或创建文章。",
+      },
+    },
+    {
+      path: "/blog",
+      name: "blog",
+      component: BlogList,
+      meta: {
+        show: true,
+        title: "Blog",
+        description: "Blog panel",
+        transition: "fade",
+        summary: "博客面板。",
+      },
+    },
+    {
+      path: "/blog/:id",
+      name: "article-detail",
+      component: ArticleDetail,
+      meta: {
+        title: "文章详情",
+        description: "Article detail",
+        transition: "fade",
+        summary: "查看文章详情。",
       },
     },
     {

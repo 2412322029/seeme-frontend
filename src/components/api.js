@@ -230,3 +230,77 @@ export async function logfile(filename, opts = {}) {
 export async function qlocation(start, end) {
   return await fetchAdmin(`/get_location_by_time?start=${start}&end=${end}`);
 }
+
+export async function createArticle({ title, tag, content, summary, cover_url }) {
+  axiosInstance.defaults.headers.common["API-KEY"] =
+    localStorage.getItem("admin_api_key") || "";
+  const res = await axiosInstance.post("/blog/articles", {
+    title,
+    tag,
+    content,
+    summary,
+    cover_url,
+  });
+  return res.data;
+}
+
+export async function getArticle(articleId) {
+  return fetchData(`/blog/articles/${articleId}`);
+}
+
+export async function getArticles({ tag, limit, offset } = {}) {
+  const params = {};
+  if (tag) params.tag = tag;
+  if (limit) params.limit = limit;
+  if (offset) params.offset = offset;
+  const res = await axiosInstance.get("/blog/articles", { params });
+  return res.data;
+}
+
+export async function updateArticle(articleId, { title, tag, content, summary, cover_url }) {
+  axiosInstance.defaults.headers.common["API-KEY"] =
+    localStorage.getItem("admin_api_key") || "";
+  const res = await axiosInstance.put(`/blog/articles/${articleId}`, {
+    title,
+    tag,
+    content,
+    summary,
+    cover_url,
+  });
+  return res.data;
+}
+
+export async function deleteArticle(articleId) {
+  axiosInstance.defaults.headers.common["API-KEY"] =
+    localStorage.getItem("admin_api_key") || "";
+  const res = await axiosInstance.delete(`/blog/articles/${articleId}`);
+  return res.data;
+}
+
+export async function searchArticles(keyword, { limit, offset } = {}) {
+  const params = { keyword };
+  if (limit) params.limit = limit;
+  if (offset) params.offset = offset;
+  const res = await axiosInstance.get("/blog/search", { params });
+  return res.data;
+}
+
+export async function getTags() {
+  return fetchData("/blog/tags");
+}
+
+export async function getArticleCount(tag) {
+  const params = {};
+  if (tag) params.tag = tag;
+  const res = await axiosInstance.get("/blog/count", { params });
+  return res.data;
+}
+
+export async function exportDatabase() {
+  axiosInstance.defaults.headers.common["API-KEY"] =
+    localStorage.getItem("admin_api_key") || "";
+  const res = await axiosInstance.get("/blog/export", {
+    responseType: "blob",
+  });
+  return res;
+}

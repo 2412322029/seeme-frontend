@@ -45,11 +45,16 @@
           </div>
         </div>
       </n-card>
+
+      <n-card class="blog-card" title="最新文章" bordered>
+        <blog-list />
+      </n-card>
     </div>
   </div>
 </template>
 
 <script setup>
+import BlogList from '@/components/blog-list.vue';
 import { NButton, NCard, NTable, NTimeline, NTimelineItem } from 'naive-ui';
 
 // 待办事项数据
@@ -80,6 +85,16 @@ const todoItems = [
 }
 
 .home-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.blog-card {
+  margin-top: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 

@@ -66,7 +66,7 @@
 
 <script setup>
 //https://www.xicons.org/#/
-import { Bars, Calendar, CommentDots, ExternalLinkAlt, Home, Link, Moon, Paste, Server, SolarPanel, Steam, StickyNote, Sun, Toolbox, UserClock } from '@vicons/fa';
+import { Bars, Calendar, CommentDots, ExternalLinkAlt, Home, Link, Moon, Paste, Server, SolarPanel, Steam, StickyNote, Sun, Toolbox, UserClock, Blog } from '@vicons/fa';
 import { NButton, NDrawer, NDropdown, NIcon, NLayoutHeader, NSwitch } from 'naive-ui';
 import { computed, h, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -93,6 +93,7 @@ const gen3Lower = () => {
 const links = [
   { to: '/', label: '主页', icon: Home },
   { to: '/note', label: '笔记', icon: StickyNote },
+  { to: '/blog', label: '博客', icon: Blog },
   { to: '/doing', label: 'doing', icon: UserClock },
   { to: '/e/' + keysss.value || gen3Lower(), label: '剪切板', icon: Paste },
   { to: '/calendar', label: '番剧日历', icon: Calendar },
